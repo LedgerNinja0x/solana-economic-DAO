@@ -1,12 +1,12 @@
-# Ecoverse DAO
+# Ecoverse DAO :postbox:
 This Repo contains 2 Solana smart contracts (programs), powering a publicly audited voting system for [BalloonBox](https://www.balloonbox.io/)'s Ecoverse dapp. The smart contracts are
- - `ecov` a token contract swapping unidirectionally SOL --> ECOV
+ - `ecov` a token contract swapping unidirectionally SOL &rarr; ECOV
  - `dao` a DAO contract to vote on future Ecoverse projects
 
 ---
 
-### Milestones
-2022/12
+### Milestones 
+:date: 2022/12
 
 |Mon|Tue|Wed|Thu|Fri|
 |:-:|:-:|:-:|:-:|:-:|
