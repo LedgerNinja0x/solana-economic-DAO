@@ -3,7 +3,7 @@ import { config } from "dotenv";
 config();
 
 // Instantiate the SDK and pass in a signer
-const sdk = ThirdwebSDK.fromPrivateKey("devnet", process.env.PRIVATE_KEY);
+const sdk = ThirdwebSDK.fromPrivateKey("devnet", process.env.LIQUIDITY_POOL_PRIVATE_KEY);
 
 // Define your program metadata
 const metadata = {
