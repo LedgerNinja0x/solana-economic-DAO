@@ -13,4 +13,4 @@ Cargo.lock
 
 # Node
 */node_modules/
-transfers*
+/transfers/
