@@ -16,7 +16,7 @@ solana airdrop 2 X000Y0uRacCoUnTAddrEss000pAYXj5NyiEjz6MZWXi
 solana account X000Y0uRacCoUnTAddrEss000pAYXj5NyiEjz6MZWXi
 ```
 
-Next, deploy to Solana **devnet**. But first... ensure that the account you'll be using to sign the deploy transaction has enough balance, if not airdrop some devnet SOL tokens to it 
+Next, deploy to Solana **devnet**. But first... ensure that the account you'll be using to sign the deploy transaction has enough balance, if not airdrop some devnet SOL tokens to it. Then run
 ```
 solana config set --url https://api.devnet.solana.com               # set network to devnet
 npm run reset-and-build                                             # clean up mess and deploy

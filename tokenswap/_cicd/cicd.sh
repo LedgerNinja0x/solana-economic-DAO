@@ -23,7 +23,7 @@ case $1 in
         done;;
     "build")
         for program in "${SOLANA_PROGRAMS[@]}"; do
-            cargo build-bpf --manifest-path=./$program/Cargo.toml --bpf-out-dir=./_dist/program
+            cargo build-sbf --manifest-path=./$program/Cargo.toml --sbf-out-dir=./_dist/program
         done;;
     "deploy")
         for program in "${SOLANA_PROGRAMS[@]}"; do
@@ -40,7 +40,7 @@ case $1 in
         rm -rf _dist/program
         for program in "${SOLANA_PROGRAMS[@]}"; do
             cargo clean --manifest-path=./$program/Cargo.toml
-            cargo build-bpf --manifest-path=./$program/Cargo.toml --bpf-out-dir=./_dist/program
+            cargo build-sbf --manifest-path=./$program/Cargo.toml --sbf-out-dir=./_dist/program
             solana program deploy _dist/program/$program.so
         done
         npm install
