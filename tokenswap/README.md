@@ -18,6 +18,12 @@ solana account X000Y0uRacCoUnTAddrEss000pAYXj5NyiEjz6MZWXi
 
 Next, deploy to Solana **devnet**. But first... ensure that the account you'll be using to sign the deploy transaction has enough balance, if not airdrop some devnet SOL tokens to it. Then run
 ```
-solana config set --url https://api.devnet.solana.com               # set network to devnet
-npm run reset-and-build                                             # clean up mess and deploy
+solana config set --url https://api.devnet.solana.com                       # set network to devnet
+npm run reset-and-build                                                     # clean up mess and deploy
+```
+
+Now check the deployment was successful. Navigate to [solscan.io](https://solscan.io/?cluster=devnet) and search your program entering its id. Then run in terminal
+```bash
+solana program show --programs                                              # print program specs
+solana-keygen verify <PROGRAM_ID> _dist/program/program-keypair.json        # verify the program address against your keypair file (should return 'success')
 ```
