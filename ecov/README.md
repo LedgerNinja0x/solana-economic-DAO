@@ -4,6 +4,6 @@ This directory contains a **thirdweb** Solana program to mint ECOV token on Sola
 
 ---
 
-Token Program Address (search on [solscan.io](https://solscan.io/):
+Token Program Address (search on [solscan.io](https://solscan.io/) ):
 - devnet `7MYTw8bq2Cq5WwXQREBqUHJP4hqPqsPeWyMxujgT98xW`
 - mainnet `{{comint_soon}}`
