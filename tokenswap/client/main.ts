@@ -106,11 +106,11 @@ async function main() {
     //     )
     // );
 
-    // // Bathsheba sends 0.05 SOL to Rahab
-    // console.log("Bathsheba sends SOL to Rahab");
-    // console.log(`Bathsheba's pubkey = ${bathsheba.publicKey}$`);
-    // console.log(`Rahab's pubkey = ${rahab.publicKey}$`);
-    // await sendLamports(bathsheba, rahab.publicKey, 50000000);
+    // Bathsheba sends 0.05 SOL to Rahab
+    console.log("Bathsheba sends SOL to Rahab");
+    console.log(`Bathsheba's pubkey = ${bathsheba.publicKey}$`);
+    console.log(`Rahab's pubkey = ${rahab.publicKey}$`);
+    await sendLamports(bathsheba, rahab.publicKey, 50000000);
 
     // Ruth sends 1 SOL to Tamar
     console.log("Ruth sends SOL to Tamar");

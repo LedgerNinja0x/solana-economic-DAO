@@ -1,0 +1,7 @@
+mode_modules/
+program/target/
+
+/_cicd/
+/_dist/
+/accounts/
+/client/

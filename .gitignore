@@ -13,7 +13,6 @@
 
 # Node
 */node_modules/
-/transfers/
 */playground.rs
 */keypairs.md
 
