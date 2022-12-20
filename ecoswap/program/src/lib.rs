@@ -52,6 +52,16 @@ pub fn process_instruction(
     msg!("SOL transfer succeeded!");
 
 
+    // // Find a Program Derived Account (PDA) and call it escrow
+    // // Deterministically derive the escrow pubkey
+    // let (escrow_pubkey, escrow_bump_seed) = Pubkey::find_program_address(&[&["BalloonBox", "-", "escrow"]], &ecov_program);
+    // To reduce the compute cost, use find_program_address() fn 
+    // off-chain and pass the resulting bump seed to the program.
+    // PDA addresses are indistinguishable from any other pubkey.
+    // The only way for the runtime to verify that the address belongs to a 
+    // program is for the program to supply the seeds used to generate the address.
+
+
     // ECOV transfer from ECOV POOL to USER
     invoke_signed(
         &instruction::transfer(
