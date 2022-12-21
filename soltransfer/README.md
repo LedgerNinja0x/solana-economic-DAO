@@ -1,5 +1,5 @@
 
-# Tokenswap Program :chipmunk:
+# SolTransfer Program :chipmunk:
 
  - What? This is an on-chain program on Solana, which interacts with Solana's native System Program<br/>
  - Why? Transfer an amount of SOL token from account A to account B.<br/>

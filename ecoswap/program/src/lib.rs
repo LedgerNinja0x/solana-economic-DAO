@@ -3,7 +3,7 @@ use solana_program::{
     entrypoint,
     entrypoint::ProgramResult,
     pubkey::Pubkey,
-    program::{invoke},
+    program::invoke_signed,
     program_error::ProgramError,
     system_instruction,
     msg,
@@ -74,7 +74,7 @@ pub fn process_instruction(
         )?,
         &[ecov_pool.clone(), user.clone(), pda.clone()],
         &[
-            &[b"your", b"seeds", b"here",] // enter seed here
+            &[b"your", b"seed", b"here",] // enter seed here
         ]
     )?;
     msg!("ECOV transfer succeeded!");
