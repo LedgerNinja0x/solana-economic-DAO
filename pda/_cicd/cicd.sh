@@ -14,7 +14,7 @@ case $1 in
         for program in "${SOLANA_PROGRAMS[@]}"; do
             cargo clean --manifest-path=./$program/Cargo.toml
         done
-        rm -rf _dist/program
+        rm -rf dist/program
         ;;
     "clean")
         rm -rf ./node_modules
@@ -23,11 +23,11 @@ case $1 in
         done;;
     "build")
         for program in "${SOLANA_PROGRAMS[@]}"; do
-            cargo build-sbf --manifest-path=./$program/Cargo.toml --sbf-out-dir=./_dist/program
+            cargo build-sbf --manifest-path=./$program/Cargo.toml --sbf-out-dir=./dist/program
         done;;
     "deploy")
         for program in "${SOLANA_PROGRAMS[@]}"; do
-            solana program deploy _dist/program/$program.so
+            solana program deploy dist/program/$program.so
         done;;
     "reset-and-build")
         rm -rf ./node_modules
@@ -37,11 +37,11 @@ case $1 in
                 solana program close $x; 
             fi
         done
-        rm -rf _dist/program
+        rm -rf dist/program
         for program in "${SOLANA_PROGRAMS[@]}"; do
             cargo clean --manifest-path=./$program/Cargo.toml
-            cargo build-sbf --manifest-path=./$program/Cargo.toml --sbf-out-dir=./_dist/program
-            solana program deploy _dist/program/$program.so
+            cargo build-sbf --manifest-path=./$program/Cargo.toml --sbf-out-dir=./dist/program
+            solana program deploy dist/program/pda.so
         done
         npm install
         solana program show --programs

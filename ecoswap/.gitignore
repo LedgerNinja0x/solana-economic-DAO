@@ -1,4 +1,4 @@
-mode_modules/
+node_modules/
 program/target/
 
 /_cicd/

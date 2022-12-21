@@ -38,7 +38,7 @@ pub fn process_instruction(
 
     // check whether PDAs match up
     let signers_seeds: &[&[u8]; 3] = &[
-        b"programidaddress",
+        b"seedyseed",
         &funding_account.key.to_bytes(),
         &[*pda_bump],
     ];

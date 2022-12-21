@@ -11,23 +11,25 @@ import {
 import { readFileSync } from "fs";
   
     // Users
-    let PAYER_KEYPAIR: Keypair;
-
-    /**
-     * HELPER FUNC
-     */
-    function createKeypairFromFile(path: string): Keypair {
-        return Keypair.fromSecretKey(
-            Buffer.from(JSON.parse(readFileSync(path, "utf-8")))
-        )
-} 
+    const PAYER_KEYPAIR = Keypair.generate();
     
-    PAYER_KEYPAIR = createKeypairFromFile(__dirname + "/../accounts/rahab.json");
+//     let PAYER_KEYPAIR: Keypair;
+//     /**
+//      * HELPER FUNC
+//      */
+//     function createKeypairFromFile(path: string): Keypair {
+//         return Keypair.fromSecretKey(
+//             Buffer.from(JSON.parse(readFileSync(path, "utf-8")))
+//         )
+// } 
+//     PAYER_KEYPAIR = createKeypairFromFile(__dirname + "/../accounts/rahab.json");
   
+
     (async () => {
     const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
     const programId = new PublicKey(
-        "yo8syke94k0ZyiNwAJbl5j9PFXCWuBjs7es623V9fh4"
+        "6eW5nnSosr2LpkUGCdznsjRGDhVb26tLmiM1P8RV1QQp"
+        // ^| What address is the one used here above?
         // program_id of the EcoSwap token - currently using a random one
     );
 
@@ -36,12 +38,14 @@ import { readFileSync } from "fs";
         await connection.requestAirdrop(PAYER_KEYPAIR.publicKey, LAMPORTS_PER_SOL)
     );
 
-    const [pda, bump] = await PublicKey.findProgramAddress(
-        [Buffer.from("BA7u5WnB8P7MVdspbd6UjMsC7M1iBQgxQg4GrwHjwZ4R"), PAYER_KEYPAIR.publicKey.toBuffer()],
+    const [pda, bump] = await PublicKey.findProgramAddressSync(
+        [Buffer.from("seedyseed"), PAYER_KEYPAIR.publicKey.toBuffer()],
         programId
     );
 
+    // print PDA info
     console.log(`PDA Pubkey: ${pda.toString()}`);
+    console.log(`PDA Bump: ${bump.toString()}`);
 
     const createPDAIx = new TransactionInstruction({
     programId: programId,

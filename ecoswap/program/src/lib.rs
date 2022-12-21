@@ -27,7 +27,7 @@ pub fn process_instruction(
     let acc_iter = &mut accounts.iter();
     let user = next_account_info(acc_iter)?; // ecoverse user requesting ECOV
     let payee = next_account_info(acc_iter)?; // gerry = BBox cash-in account
-    let ecov_program = next_account_info(acc_iter)?; // ECOV token program id
+    let token_program = next_account_info(acc_iter)?; // Solana token program
     let ecov_pool = next_account_info(acc_iter)?; // gigi = wallet owning ECOV 
     let pda = next_account_info(acc_iter)?; // program-derived-account owning gigi
 
@@ -65,7 +65,7 @@ pub fn process_instruction(
     // ECOV transfer from ECOV POOL to USER
     invoke_signed(
         &instruction::transfer(
-            ecov_program.key,
+            token_program.key,
             ecov_pool.key,
             user.key,
             pda.key,
