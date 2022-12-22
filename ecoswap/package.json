@@ -13,12 +13,15 @@
     "simulation": "ts-node ./client/main.ts"
   },
   "dependencies": {
+    "@solana/spl-token": "^0.3.6",
     "@solana/web3.js": "^1.33.0",
     "buffer-layout": "^1.2.2",
     "dotenv": "^16.0.3"
   },
   "devDependencies": {
+    "@solana/spl-memo": "^0.2.2",
     "@tsconfig/recommended": "^1.0.1",
+    "@types/bn.js": "^5.1.1",
     "@types/node": "^15.6.1",
     "prettier": "^2.3.0",
     "ts-node": "^10.0.0",
