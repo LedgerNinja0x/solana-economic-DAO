@@ -1,0 +1,8 @@
+node_modules/
+program/target/
+
+/_cicd/
+/_dist/
+/accounts/
+/client/
+*main.ts
