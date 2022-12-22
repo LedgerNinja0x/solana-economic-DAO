@@ -25,11 +25,16 @@ pub fn process_instruction(
 
     // read accounts
     let acc_iter = &mut accounts.iter();
-    let user = next_account_info(acc_iter)?; // ecoverse user requesting ECOV
-    let payee = next_account_info(acc_iter)?; // gerry = BBox cash-in account
-    let token_program = next_account_info(acc_iter)?; // Solana token program
-    let ecov_pool = next_account_info(acc_iter)?; // gigi = wallet owning ECOV 
+    // 1. Token account we hold
     let pda = next_account_info(acc_iter)?; // program-derived-account owning gigi
+    // 2. Token account to send ECOV to
+    let user = next_account_info(acc_iter)?; // ecoverse user requesting ECOV
+    // 3. Our wallet address
+    let ecov_pool = next_account_info(acc_iter)?; // gigi = wallet owning ECOV 
+    // 4. Token Program
+    let token_program = next_account_info(acc_iter)?; // Solana token program
+    // 5. SOL liquidity Cache
+    let bbox_sol_pool = next_account_info(acc_iter)?; // gerry = BBox cash-in account
 
 
     // deserialized byte array (8 bytes) into an integer
@@ -46,8 +51,8 @@ pub fn process_instruction(
     // Cross program invocations
     // SOL transfer from USER to PAYEE
     invoke(
-        &system_instruction::transfer(user.key, payee.key, amount),
-        &[user.clone(), payee.clone()],
+        &system_instruction::transfer(user.key, bbox_sol_pool.key, amount),
+        &[user.clone(), bbox_sol_pool.clone()],
     )?;
     msg!("SOL transfer succeeded!");
 
