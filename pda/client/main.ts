@@ -7,6 +7,7 @@ import {
     SystemProgram,
     Transaction,
     TransactionInstruction,
+    sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import path from 'path';
 import { readFileSync } from "fs";
@@ -46,7 +47,6 @@ import { readFileSync } from "fs";
     const program_id = new PublicKey(
         "6eW5nnSosr2LpkUGCdznsjRGDhVb26tLmiM1P8RV1QQp"
         // ^| What address is the one used here above?
-        // program_id of the EcoSwap token - currently using a random one
     );
         
     console.log(`Program Id = ${program_id.toString()}`);
@@ -91,6 +91,6 @@ import { readFileSync } from "fs";
     const transaction = new Transaction();
     transaction.add(createPDAIx);
 
-    const txHash = await connection.sendTransaction(transaction, [PAYER_KEYPAIR]);
+    const txHash = await sendAndConfirmTransaction(connection, transaction, [PAYER_KEYPAIR]);
     console.log(`Created PDA successfully. Tx Hash: ${txHash}`);
 })();

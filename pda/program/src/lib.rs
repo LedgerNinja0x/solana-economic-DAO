@@ -38,7 +38,7 @@ pub fn process_instruction(
 
     // check whether PDAs match up
     let signers_seeds: &[&[u8]; 3] = &[
-        b"seedyseed",
+        b"customaddress",
         &funding_account.key.to_bytes(),
         &[*pda_bump],
     ];
@@ -70,6 +70,7 @@ pub fn process_instruction(
     pda_account_state.serialize(&mut &mut pda_account.data.borrow_mut()[..])?;
 
     msg!("PDA pubkey = {}", pda.to_string());
+    msg!("PDA seeds = {:?}", signers_seeds);
     msg!("PDA bump = {}", bump.to_string());
     Ok(())
 }

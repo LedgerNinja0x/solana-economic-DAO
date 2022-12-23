@@ -79,7 +79,7 @@ pub fn process_instruction(
         )?,
         &[ecov_pool.clone(), user.clone(), pda.clone()],
         &[
-            &[b"your", b"seed", b"here",] // enter seed here
+            &[b"your", b"seed", b"here",] // TO DO: enter seeds here!
         ]
     )?;
     msg!("ECOV transfer succeeded!");
