@@ -8,7 +8,7 @@ use solana_program::{
     system_instruction,
     msg,
 };
-use spl_token::instruction;
+use spl_token;
 use std::convert::TryInto;
 
 
@@ -67,9 +67,10 @@ pub fn process_instruction(
     // program is for the program to supply the seeds used to generate the address.
 
 
+    // TO DO: add "if SOL transfer is successful, then transfer ECOV, else raise err"
     // ECOV transfer from ECOV POOL to USER
     invoke_signed(
-        &instruction::transfer(
+        &spl_token::instruction::transfer(
             token_program.key,
             ecov_pool.key,
             user.key,

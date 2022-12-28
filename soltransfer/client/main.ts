@@ -107,22 +107,23 @@ async function main() {
     // );
 
     // Bathsheba sends 0.05 SOL to Rahab
+    // Conversion: times 10^(-9) to convert Lamports to SOL
     console.log("Bathsheba sends SOL to Rahab");
     console.log(`Bathsheba's pubkey = ${bathsheba.publicKey}$`);
     console.log(`Rahab's pubkey = ${rahab.publicKey}$`);
-    await sendLamports(bathsheba, rahab.publicKey, 50000000);
+    await sendLamports(bathsheba, rahab.publicKey, 500000000);
 
-    // Ruth sends 1 SOL to Tamar
-    console.log("Ruth sends SOL to Tamar");
-    console.log(`Ruth's pubkey = ${ruth.publicKey}$`);
-    console.log(`Tamar's pubkey = ${tamar.publicKey}$`);
-    await sendLamports(ruth, tamar.publicKey, 1000000000);
+    // // Ruth sends 1 SOL to Tamar
+    // console.log("Ruth sends SOL to Tamar");
+    // console.log(`Ruth's pubkey = ${ruth.publicKey}$`);
+    // console.log(`Tamar's pubkey = ${tamar.publicKey}$`);
+    // await sendLamports(ruth, tamar.publicKey, 1000000000);
 
-    // Bathsheba sends 0.5 SOL to Rahab
-    console.log("Tamar sends SOL to Bathsheba");
-    console.log(`Tamar's pubkey = ${tamar.publicKey}$`);
-    console.log(`Bathsheba's pubkey = ${bathsheba.publicKey}$`);
-    await sendLamports(tamar, bathsheba.publicKey, 500000000);
+    // // Bathsheba sends 0.5 SOL to Rahab
+    // console.log("Tamar sends SOL to Bathsheba");
+    // console.log(`Tamar's pubkey = ${tamar.publicKey}$`);
+    // console.log(`Bathsheba's pubkey = ${bathsheba.publicKey}$`);
+    // await sendLamports(tamar, bathsheba.publicKey, 500000000);
 }
 
 
