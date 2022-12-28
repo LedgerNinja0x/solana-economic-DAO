@@ -27,13 +27,10 @@ function createKeypairFromFile(path: string): Keypair {
 const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
 
 let connection: Connection;
-// let programKeypair: Keypair;
-// let programId: PublicKey;
+let programKeypair: Keypair;
+let programId: PublicKey;
 let signer: Keypair;
 
-const programId = new PublicKey(
-    "6eW5nnSosr2LpkUGCdznsjRGDhVb26tLmiM1P8RV1QQp"
-  );
 
 /**
  * DERIVE PDA
@@ -73,14 +70,13 @@ async function main() {
         `https://api.${SOLANA_NETWORK}.solana.com`, 'confirmed'
     );
 
-    // programKeypair = createKeypairFromFile(
-    //     path.join(
-    //         path.resolve(__dirname, '../dist/program'),
-    //         'pda-keypair.json'
-    //     )
-    // );
-    // programId = programKeypair.publicKey;
-
+    programKeypair = createKeypairFromFile(
+        path.join(
+            path.resolve(__dirname, '../dist/program'),
+            'pda-keypair.json'
+        )
+    );
+    programId = programKeypair.publicKey;
     signer = createKeypairFromFile(
         "/Users/irenefabris/Documents/GitHub/ecoverse-dao/pda/accounts/rahab.json"
     );

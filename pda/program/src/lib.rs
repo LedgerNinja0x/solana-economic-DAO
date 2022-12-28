@@ -16,7 +16,7 @@ entrypoint!(process_instruction);
 
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct EcoBalance {
-    balance: u64,
+    is_initialized: bool,
 }
 
 pub fn process_instruction(
@@ -43,8 +43,9 @@ pub fn process_instruction(
         &[*pda_bump],
     ];
 
+    // TO DO: use find_program_address() fn instead of create_..() fn
     // generate PDA account
-    let (pda, bump) = Pubkey::find_program_address(signers_seeds, program_id);
+    let pda = Pubkey::create_program_address(signers_seeds, program_id)?;
 
     if pda.ne(&pda_account.key) {
         return Err(ProgramError::InvalidAccountData);
@@ -66,11 +67,11 @@ pub fn process_instruction(
     )?;
 
     let mut pda_account_state = EcoBalance::try_from_slice(&pda_account.data.borrow())?;
-    pda_account_state.balance = 0;
+    pda_account_state.is_initialized = true;
     pda_account_state.serialize(&mut &mut pda_account.data.borrow_mut()[..])?;
 
     msg!("PDA pubkey = {}", pda.to_string());
     msg!("PDA seeds = {:?}", signers_seeds);
-    msg!("PDA bump = {}", bump.to_string());
+    msg!("PDA bump = {}", pda_bump.to_string());
     Ok(())
 }
