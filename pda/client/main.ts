@@ -37,7 +37,7 @@ let signer: Keypair;
  */
 async function derivePDA(signer: Keypair) {
     const [pda, bump] = await PublicKey.findProgramAddress(
-        [Buffer.from("customaddress"), signer.publicKey.toBuffer()],
+        [Buffer.from("strawberryjam"), signer.publicKey.toBuffer()],
         programId
     );
     console.log(`PDA Pubkey: ${pda.toString()}`);
