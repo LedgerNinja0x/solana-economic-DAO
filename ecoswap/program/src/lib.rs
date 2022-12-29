@@ -46,7 +46,7 @@ pub fn process_instruction(
 
     msg!("Request to recieve {:?} ECOV from user {:?}",
     amount, user.key);
-    msg!("Transfer in progress...");
+    msg!("SOL Transfer in progress...");
 
     // Cross program invocations
     // SOL transfer from USER to PAYEE
@@ -57,8 +57,8 @@ pub fn process_instruction(
     msg!("SOL transfer succeeded!");
 
 
-    // // Find a Program Derived Account (PDA) and call it escrow
-    // // Deterministically derive the escrow pubkey
+    // Find a Program Derived Account (PDA) and call it escrow
+    // Deterministically derive the escrow pubkey
     // let (escrow_pubkey, escrow_bump_seed) = Pubkey::find_program_address(&[&["BalloonBox", "-", "escrow"]], &ecov_program);
     // To reduce the compute cost, use find_program_address() fn 
     // off-chain and pass the resulting bump seed to the program.
@@ -68,7 +68,10 @@ pub fn process_instruction(
 
 
     // TO DO: add "if SOL transfer is successful, then transfer ECOV, else raise err"
+    // TO DO: multiply amount by 10E-9, b/c the standard unit for SOL is Lamports,
+    // whereas the stanrard unit for ECOV is the mere decimal system
     // ECOV transfer from ECOV POOL to USER
+    msg!("ECOV Transfer in progress...");
     invoke_signed(
         &spl_token::instruction::transfer(
             token_program.key,
@@ -80,7 +83,7 @@ pub fn process_instruction(
         )?,
         &[ecov_pool.clone(), user.clone(), pda.clone()],
         &[
-            &[b"strawberryjam", b"BHiWZuwirCGuVngahGRxnkvxFFCWoXbE5VWzTm1JQVMA", b"255",] // TO DO: enter seeds here!
+            &[b"BalloonBox-", b"escrow"] // TO DO: enter seeds here!
         ]
     )?;
     msg!("ECOV transfer succeeded!");

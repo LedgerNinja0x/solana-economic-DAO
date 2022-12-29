@@ -130,7 +130,7 @@ async function main() {
   // Accounts
   pda = createPublicKeyFromStr(PDA);
   payee = createPublicKeyFromStr(PAYEE);
-  user = createKeypairFromFile(__dirname + USER_PATH);;
+  user = createKeypairFromFile(__dirname + USER_PATH);
   ecov = createKeypairFromFile(__dirname + ECOV_PATH);
 
   await swapBabySwap(pda, payee, user, ecov, connection);

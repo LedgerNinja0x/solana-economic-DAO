@@ -38,13 +38,13 @@ pub fn process_instruction(
 
     // check whether PDAs match up
     let signers_seeds: &[&[u8]; 3] = &[
-        b"strawberryjam",
-        &funding_account.key.to_bytes(),
+        b"BalloonBox-",
+        b"escrow",
         &[*pda_bump],
     ];
 
     // TO DO: use find_program_address() fn instead of create_..() fn
-    // generate PDA account
+    // to generate PDA account
     let pda = Pubkey::create_program_address(signers_seeds, program_id)?;
 
     if pda.ne(&pda_account.key) {

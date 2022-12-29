@@ -37,7 +37,7 @@ let signer: Keypair;
  */
 async function derivePDA(signer: Keypair) {
     const [pda, bump] = await PublicKey.findProgramAddress(
-        [Buffer.from("strawberryjam"), signer.publicKey.toBuffer()],
+        [Buffer.from("BalloonBox-"), Buffer.from("escrow")],
         programId
     );
     console.log(`PDA Pubkey: ${pda.toString()}`);
@@ -78,7 +78,7 @@ async function main() {
     );
     programId = programKeypair.publicKey;
     signer = createKeypairFromFile(
-        "/Users/irenefabris/Documents/GitHub/ecoverse-dao/pda/accounts/rahab.json"
+        "/Users/irenefabris/Documents/GitHub/ecoverse-dao/pda/accounts/bathsheba.json"
     );
     console.log(`ProgramId = ${programId.toString()}`);
     console.log(`Signer = ${signer.publicKey.toString()}`);

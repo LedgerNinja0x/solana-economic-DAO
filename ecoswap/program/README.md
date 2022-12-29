@@ -2,7 +2,7 @@
 This folder contains a custom Rust contract that orchestrates cross-contract calls and performs a 1:1 SOL &rarr; ECOV tokenswap. To do so, it invokes the PDA and manages transfers of both Solana native tokens (SOL) and SPL tokens (ECOV) at once!
 
 ---
-a
+
 ### Cargo.toml
 
 Are you unable to compile your Rust smart contract code? It could be caused by the compiletime error saying
