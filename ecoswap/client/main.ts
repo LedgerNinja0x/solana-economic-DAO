@@ -2,6 +2,7 @@ import {
     Connection,
     Keypair,
     PublicKey,
+    SystemProgram,
     Transaction,
     TransactionInstruction,
     sendAndConfirmTransaction,
@@ -39,7 +40,7 @@ const ECOV_PATH = process.env.ECOV_PATH;
 const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
 
 const lo = require("buffer-layout");
-const TOKEN_TRANSFER_AMOUNT = 2;
+const TOKEN_TRANSFER_AMOUNT = 1000000000;
 
 let connection: Connection;
 let programKeypair: Keypair;
@@ -94,6 +95,11 @@ async function swapBabySwap(
         isWritable: true,
         pubkey: payee, //pubkey only
       },
+      {
+        isSigner: false,
+        isWritable: false,
+        pubkey: SystemProgram.programId,
+      }
     ],
   })
 
