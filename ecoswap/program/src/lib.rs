@@ -3,7 +3,7 @@ use solana_program::{
     entrypoint,
     entrypoint::ProgramResult,
     pubkey::Pubkey,
-    program::invoke_signed,
+    program::{invoke, invoke_signed},
     program_error::ProgramError,
     system_instruction,
     msg,
@@ -34,7 +34,7 @@ pub fn process_instruction(
     // 4. Token Program
     let token_program = next_account_info(acc_iter)?; // Solana token program
     // 5. SOL liquidity Cache
-    let bbox_sol_pool = next_account_info(acc_iter)?; // gerry = BBox cash-in account
+    let bbox_sol_payee = next_account_info(acc_iter)?; // gerry = BBox cash-in account
 
 
     // deserialized byte array (8 bytes) into an integer
@@ -51,8 +51,8 @@ pub fn process_instruction(
     // Cross program invocations
     // SOL transfer from USER to PAYEE
     invoke(
-        &system_instruction::transfer(user.key, bbox_sol_pool.key, amount),
-        &[user.clone(), bbox_sol_pool.clone()],
+        &system_instruction::transfer(user.key, bbox_sol_payee.key, amount),
+        &[user.clone(), bbox_sol_payee.clone()],
     )?;
     msg!("SOL transfer succeeded!");
 
@@ -80,7 +80,7 @@ pub fn process_instruction(
         )?,
         &[ecov_pool.clone(), user.clone(), pda.clone()],
         &[
-            &[b"your", b"seed", b"here",] // TO DO: enter seeds here!
+            &[b"strawberryjam", b"BHiWZuwirCGuVngahGRxnkvxFFCWoXbE5VWzTm1JQVMA", b"255",] // TO DO: enter seeds here!
         ]
     )?;
     msg!("ECOV transfer succeeded!");
