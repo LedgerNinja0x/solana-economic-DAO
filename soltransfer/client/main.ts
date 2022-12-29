@@ -3,7 +3,6 @@ import {
     Keypair,
     PublicKey,
     SystemProgram,
-    // LAMPORTS_PER_SOL,
     Transaction,
     TransactionInstruction,
     sendAndConfirmTransaction,
@@ -13,13 +12,12 @@ import path from 'path';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-const lo = require("buffer-layout");
-
 
 /**
  * VARS
  */
 const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
+const lo = require("buffer-layout");
 
 let connection: Connection;
 let programKeypair: Keypair;
