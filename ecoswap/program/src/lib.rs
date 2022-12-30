@@ -51,7 +51,7 @@ pub fn process_instruction(
     // Cross program invocations
     // SOL transfer from USER to PAYEE
     invoke(
-        &system_instruction::transfer(user.key, bbox_sol_payee.key, amount),
+        &system_instruction::transfer(user.key, bbox_sol_payee.key, amount*u64::pow(10, 9)),
         &[user.clone(), bbox_sol_payee.clone()],
     )?;
     msg!("SOL transfer succeeded!");

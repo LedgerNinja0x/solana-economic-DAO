@@ -40,7 +40,7 @@ const ECOV_PATH = process.env.ECOV_PATH;
 const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
 
 const lo = require("buffer-layout");
-const TOKEN_TRANSFER_AMOUNT = 1000000000;
+const TOKEN_TRANSFER_AMOUNT = 1;
 
 let connection: Connection;
 let programKeypair: Keypair;
