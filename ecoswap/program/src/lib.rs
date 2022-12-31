@@ -32,12 +32,14 @@ pub fn process_instruction(
     let user = next_account_info(acc_iter)?; // ecoverse user requesting ECOV
     // 3. SPL-token holder account
     let ecov_vault = next_account_info(acc_iter)?; // wallet owning ECOV (e.g. gigi)
-    // 4. Token Program
-    let token_program = next_account_info(acc_iter)?; // Solana token program
-    // 5. SOL liquidity Cache
+    // 4. SOL liquidity Cache
     let bbox_sol_payee = next_account_info(acc_iter)?; // gerry = BBox cash-in account
-    // 6. SPL-token mint account
+    // 5. SPL-token mint account
     let token_mint_account = next_account_info(acc_iter)?;
+    // 6. Token Program
+    let token_program = next_account_info(acc_iter)?; // Solana TokenProgram
+    // 7. System program 
+    let system_program = next_account_info(acc_iter)?; // Solana SystemProgram
 
 
     // deserialized byte array (8 bytes) into an integer
@@ -71,18 +73,18 @@ pub fn process_instruction(
         So create an ATA right now!
      */
     msg!("Create an ATA for the ECOV recipient");
-    // invoke(
-    //     &spl_associated_token_account::instruction::create_associated_token_account(
-    //         &user.key, //funding address
-    //         &user.key, //parent address for ATA derivation
-    //         &token_mint_account.key,
-    //         &token_program.key,
-    //     ),
-    //     &[user.clone(), token_mint_account.clone(), token_program.clone()],
-    // )?;
+    invoke(
+        &spl_associated_token_account::instruction::create_associated_token_account(
+            &user.key, //funding address
+            &ecov_vault.key, //parent address for ATA derivation
+            &token_mint_account.key,
+            &token_program.key,
+        ),
+        &[user.clone(), ecov_vault.clone(), token_mint_account.clone(), token_program.clone(), system_program.clone()],
+    )?;
     msg!("Fetching the created ATA");
     let ata = spl_associated_token_account::get_associated_token_address(
-        &user.key,
+        &ecov_vault.key,
         &token_mint_account.key,
     );
     msg!("Retrieved ATA: {:?}", ata.to_string());

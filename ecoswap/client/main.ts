@@ -90,11 +90,6 @@ async function swapBabySwap(
       },
       {
         isSigner: false,
-        isWritable: false,
-        pubkey: TOKEN_PROGRAM_ID, //pubkey only
-      },
-      {
-        isSigner: false,
         isWritable: true,
         pubkey: payee, //pubkey only
       },
@@ -107,7 +102,17 @@ async function swapBabySwap(
         isSigner: false,
         isWritable: true,
         pubkey: token_mint, //pubkey only
-      }
+      },
+      {
+        isSigner: false,
+        isWritable: false,
+        pubkey: TOKEN_PROGRAM_ID, //pubkey only
+      },
+      {
+        isSigner: false,
+        isWritable: false,
+        pubkey: SystemProgram.programId, //pubkey only
+      },
     ],
   })
 
