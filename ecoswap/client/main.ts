@@ -35,6 +35,7 @@ function createPublicKeyFromStr(address: string): PublicKey {
  */
 const PDA = process.env.PDA as string;
 const PAYEE = process.env.PAYEE as string;
+const TOKEN_MINT = process.env.TOKEN_MINT as string;
 const USER_PATH = process.env.USER_PATH;
 const ECOV_PATH = process.env.ECOV_PATH;
 const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
@@ -46,10 +47,11 @@ let connection: Connection;
 let programKeypair: Keypair;
 let programId: PublicKey;
 
-let pda: PublicKey;
-let payee: PublicKey;
 let user: Keypair;
 let ecov: Keypair;
+let pda: PublicKey;
+let payee: PublicKey;
+let token_mint: PublicKey;
 
 
 /**
@@ -57,10 +59,11 @@ let ecov: Keypair;
  * Send x-SOL and recieve x-ECOV
  */
 async function swapBabySwap(
-      pda: PublicKey, 
-      payee: PublicKey,
       user: Keypair,
       ecov: Keypair,
+      pda: PublicKey, 
+      payee: PublicKey,
+      token_mint: PublicKey,
       connection: Connection
 ) {
   let data = Buffer.alloc(8)
@@ -99,6 +102,11 @@ async function swapBabySwap(
         isSigner: false,
         isWritable: false,
         pubkey: SystemProgram.programId,
+      },
+      {
+        isSigner: false,
+        isWritable: true,
+        pubkey: token_mint, //pubkey only
       }
     ],
   })
@@ -128,12 +136,13 @@ async function main() {
   programId = programKeypair.publicKey;
 
   // Accounts
-  pda = createPublicKeyFromStr(PDA);
-  payee = createPublicKeyFromStr(PAYEE);
   user = createKeypairFromFile(__dirname + USER_PATH);
   ecov = createKeypairFromFile(__dirname + ECOV_PATH);
+  pda = createPublicKeyFromStr(PDA);
+  payee = createPublicKeyFromStr(PAYEE);
+  token_mint = createPublicKeyFromStr(TOKEN_MINT);
 
-  await swapBabySwap(pda, payee, user, ecov, connection);
+  await swapBabySwap(user, ecov, pda, payee, token_mint, connection);
   console.log("Token transfer succeeded!");
 }
 

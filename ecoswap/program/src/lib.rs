@@ -3,12 +3,13 @@ use solana_program::{
     entrypoint,
     entrypoint::ProgramResult,
     pubkey::Pubkey,
-    program::{invoke, invoke_signed},
+    program::{invoke}, //invoke_signed
     program_error::ProgramError,
     system_instruction,
     msg,
 };
-use spl_token;
+// use spl_token;
+use spl_associated_token_account;
 use std::convert::TryInto;
 
 
@@ -29,12 +30,14 @@ pub fn process_instruction(
     let pda = next_account_info(acc_iter)?; // program-derived-account owning gigi
     // 2. Token account to send ECOV to
     let user = next_account_info(acc_iter)?; // ecoverse user requesting ECOV
-    // 3. Our wallet address
-    let ecov_pool = next_account_info(acc_iter)?; // gigi = wallet owning ECOV 
+    // 3. SPL-token holder account
+    let ecov_vault = next_account_info(acc_iter)?; // wallet owning ECOV (e.g. gigi)
     // 4. Token Program
     let token_program = next_account_info(acc_iter)?; // Solana token program
     // 5. SOL liquidity Cache
     let bbox_sol_payee = next_account_info(acc_iter)?; // gerry = BBox cash-in account
+    // 6. SPL-token mint account
+    let token_mint_account = next_account_info(acc_iter)?;
 
 
     // deserialized byte array (8 bytes) into an integer
@@ -48,8 +51,10 @@ pub fn process_instruction(
     amount, user.key);
     msg!("SOL Transfer in progress...");
 
-    // Cross program invocations
-    // SOL transfer from USER to PAYEE
+    // Cross program invocation:
+    // SOL transfer from USER to PAYEE.
+    // We multiply amount by 10^(-9), b/c the standard unit for SOL is Lamports,
+    // whereas the stanrard unit for ECOV is the mere decimal system
     invoke(
         &system_instruction::transfer(user.key, bbox_sol_payee.key, amount*u64::pow(10, 9)),
         &[user.clone(), bbox_sol_payee.clone()],
@@ -57,36 +62,62 @@ pub fn process_instruction(
     msg!("SOL transfer succeeded!");
 
 
-    // Find a Program Derived Account (PDA) and call it escrow
-    // Deterministically derive the escrow pubkey
-    // let (escrow_pubkey, escrow_bump_seed) = Pubkey::find_program_address(&[&["BalloonBox", "-", "escrow"]], &ecov_program);
-    // To reduce the compute cost, use find_program_address() fn 
-    // off-chain and pass the resulting bump seed to the program.
-    // PDA addresses are indistinguishable from any other pubkey.
-    // The only way for the runtime to verify that the address belongs to a 
-    // program is for the program to supply the seeds used to generate the address.
+    /*
+        Cross program invocation:
+        create an ATA to dup ECOV into.
+        Unlike a system transfer, for an spl-token transfer to succeed 
+        the recipient must already have an Associated Token Account (ATA)
+        compatible with the mint of that specific spl-token. 
+        So create an ATA right now!
+     */
+    msg!("Create an ATA for the ECOV recipient");
+    // invoke(
+    //     &spl_associated_token_account::instruction::create_associated_token_account(
+    //         &user.key, //funding address
+    //         &user.key, //parent address for ATA derivation
+    //         &token_mint_account.key,
+    //         &token_program.key,
+    //     ),
+    //     &[user.clone(), token_mint_account.clone(), token_program.clone()],
+    // )?;
+    msg!("Fetching the created ATA");
+    let ata = spl_associated_token_account::get_associated_token_address(
+        &user.key,
+        &token_mint_account.key,
+    );
+    msg!("Retrieved ATA: {:?}", ata.to_string());
 
 
     // TO DO: add "if SOL transfer is successful, then transfer ECOV, else raise err"
-    // TO DO: multiply amount by 10E-9, b/c the standard unit for SOL is Lamports,
-    // whereas the stanrard unit for ECOV is the mere decimal system
-    // ECOV transfer from ECOV POOL to USER
-    msg!("ECOV Transfer in progress...");
-    invoke_signed(
-        &spl_token::instruction::transfer(
-            token_program.key,
-            ecov_pool.key,
-            user.key,
-            pda.key,
-            &[],
-            amount
-        )?,
-        &[ecov_pool.clone(), user.clone(), pda.clone()],
-        &[
-            &[b"BalloonBox-", b"escrow"] // TO DO: enter seeds here!
-        ]
-    )?;
-    msg!("ECOV transfer succeeded!");
+
+    /*
+        Cross program invocation:
+        ECOV transfer from ECOV POOL to USER.
+        Find a Program Derived Account (PDA) and call it escrow
+        Deterministically derive the escrow pubkey
+        let (escrow_pubkey, escrow_bump_seed) = Pubkey::find_program_address(&[&["BalloonBox", "-", "escrow"]], &ecov_program);
+        To reduce the compute cost, use find_program_address() fn 
+        off-chain and pass the resulting bump seed to the program.
+        PDA addresses are indistinguishable from any other pubkey.
+        The only way for the runtime to verify that the address belongs to a
+        program is for the program to supply the seeds used to generate the address.
+     */
+    // msg!("ECOV Transfer in progress...");
+    // invoke_signed(
+    //     &spl_token::instruction::transfer(
+    //         token_program.key,
+    //         ecov_vault.key,
+    //         ata,
+    //         pda.key,
+    //         &[],
+    //         amount
+    //     )?,
+    //     &[ecov_vault.clone(), ata.clone(), pda.clone()],
+    //     &[
+    //         &[b"BalloonBox-", b"escrow"] //PDA seeds
+    //     ]
+    // )?;
+    // msg!("ECOV transfer succeeded!");
 
     // finally
     Ok(())
