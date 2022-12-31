@@ -12,7 +12,7 @@ import {
 } from "@solana/spl-token";
 import { readFileSync } from "fs";
 import path from 'path';
-// import * as bs58 from "bs58";
+import * as bs58 from 'bs58';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -22,7 +22,8 @@ dotenv.config();
  */
 const SENDER_ATA = process.env.SENDER_ATA as string;
 const RECEIVER_ATA = process.env.RECEIVER_ATA as string;
-const SENDER_ADDRESS_PATH = process.env.SENDER_ADDRESS_PATH;
+const SENDER_SECRETKEY = process.env.SENDER_SECRETKEY as string;
+// const SENDER_ADDRESS_PATH = process.env.SENDER_ADDRESS_PATH;
 const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
 const TOKEN_TRANSFER_AMOUNT = 1;
 const lo = require("buffer-layout");
@@ -110,7 +111,8 @@ async function main() {
     programId = programKeypair.publicKey;
 
     // Read in accounts from .env
-    sender_address = createKeypairFromFile(__dirname + SENDER_ADDRESS_PATH);
+    // sender_address = createKeypairFromFile(__dirname + SENDER_ADDRESS_PATH);
+    sender_address = Keypair.fromSecretKey(bs58.decode(SENDER_SECRETKEY));
     sender_ata = createPublicKeyFromStr(SENDER_ATA);
     receiver_ata = createPublicKeyFromStr(RECEIVER_ATA);
 
