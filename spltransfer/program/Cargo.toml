@@ -8,6 +8,7 @@ borsh = "0.9.3"
 borsh-derive = "0.9.1"
 solana-program = "1.10.12"
 spl-token = { version="3.5.0", features = [ "no-entrypoint" ] }
+spl-associated-token-account = "1.1.2"
 
 [dev-dependencies]
 solana-program-test = "1.10.12"

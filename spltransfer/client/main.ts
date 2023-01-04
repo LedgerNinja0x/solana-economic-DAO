@@ -20,21 +20,32 @@ dotenv.config();
 /**
  * VARS
  */
+const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
+const TOKEN_MINT = process.env.TOKEN_MINT as string;
+
 const SENDER_ATA = process.env.SENDER_ATA as string;
-const RECEIVER_ATA = process.env.RECEIVER_ATA as string;
 const SENDER_SECRETKEY = process.env.SENDER_SECRETKEY as string;
 // const SENDER_ADDRESS_PATH = process.env.SENDER_ADDRESS_PATH;
-const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
+
+const RECEIVER = process.env.RECEIVER as string;
+// const RECEIVER_ATA = process.env.RECEIVER_ATA as string;
+
 const TOKEN_TRANSFER_AMOUNT = 1;
 const lo = require("buffer-layout");
+
+const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID: PublicKey = new PublicKey(
+    'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+  );
 
 let connection: Connection;
 let programKeypair: Keypair;
 let programId: PublicKey;
 
+let token_mint: PublicKey;
 let sender_ata: PublicKey;
-let receiver_ata: PublicKey;
 let sender_address: Keypair;
+let receiver: PublicKey;
+let receiver_ata: PublicKey;
 
 
 /**
@@ -47,6 +58,20 @@ function createKeypairFromFile(path: string): Keypair {
 }
 function createPublicKeyFromStr(address: string): PublicKey {
   return new PublicKey(address)
+}
+
+async function findAssociatedTokenAddress(
+    receiver: PublicKey,
+    token_mint: PublicKey
+): Promise<PublicKey> {
+    return (await PublicKey.findProgramAddress(
+        [
+            receiver.toBuffer(),
+            TOKEN_PROGRAM_ID.toBuffer(),
+            token_mint.toBuffer(),
+        ],
+        SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+    ))[0];
 }
 
 
@@ -114,7 +139,12 @@ async function main() {
     // sender_address = createKeypairFromFile(__dirname + SENDER_ADDRESS_PATH);
     sender_address = Keypair.fromSecretKey(bs58.decode(SENDER_SECRETKEY));
     sender_ata = createPublicKeyFromStr(SENDER_ATA);
-    receiver_ata = createPublicKeyFromStr(RECEIVER_ATA);
+    token_mint = createPublicKeyFromStr(TOKEN_MINT);
+    receiver = createPublicKeyFromStr(RECEIVER);
+
+    receiver_ata = await findAssociatedTokenAddress(receiver, token_mint);
+    console.log("Sender's ATA =", sender_ata);
+    console.log("Receiver's ATA =", receiver_ata);
 
     // Execute spl-token transaction
     await SPLTransfer(sender_ata, receiver_ata, sender_address);
