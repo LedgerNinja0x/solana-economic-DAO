@@ -27,12 +27,12 @@ pub fn process_instruction(
 
     // 1. Associated Token account we hold
     let source_token_account = next_account_info(accounts_iter)?;
-    // 2. Associated Token account to send to
-    let destination_token_account = next_account_info(accounts_iter)?;
-    // 3. Our wallet address
+    // 2. Our wallet address
     let source_token_account_holder = next_account_info(accounts_iter)?;
-    // 4. Token Program
+    // 3. Token Program
     let token_program = next_account_info(accounts_iter)?;
+    // 4. Associated Token account to send to
+    let destination_token_account = next_account_info(accounts_iter)?;
 
     // Parsing the token transfer amount from instruction data
     let amount = instruction_data

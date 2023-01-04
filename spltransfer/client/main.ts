@@ -28,6 +28,7 @@ const SENDER_SECRETKEY = process.env.SENDER_SECRETKEY as string;
 // const SENDER_ADDRESS_PATH = process.env.SENDER_ADDRESS_PATH;
 
 const RECEIVER = process.env.RECEIVER as string;
+// const RECEIVER_SECRETKEY = process.env.RECEIVER_SECRETKEY as string;
 // const RECEIVER_ATA = process.env.RECEIVER_ATA as string;
 
 const TOKEN_TRANSFER_AMOUNT = 1;
@@ -43,7 +44,7 @@ let programId: PublicKey;
 
 let token_mint: PublicKey;
 let sender_ata: PublicKey;
-let sender_address: Keypair;
+let sender: Keypair;
 let receiver: PublicKey;
 let receiver_ata: PublicKey;
 
@@ -79,7 +80,7 @@ async function findAssociatedTokenAddress(
  * SEND SPL-TOKEN
  * Interact with the Solana TokenProgram to execute the transfer
  */
-async function SPLTransfer(sender_ata: PublicKey, receiver_ata: PublicKey, sender_address: Keypair) {
+async function SPLTransfer(sender_ata: PublicKey, sender: Keypair, receiver_ata: PublicKey) {
     let data = Buffer.alloc(8)
     lo.ns64("value").encode(TOKEN_TRANSFER_AMOUNT, data);
 
@@ -93,27 +94,27 @@ async function SPLTransfer(sender_ata: PublicKey, receiver_ata: PublicKey, sende
             pubkey: sender_ata,
           },
           {
-            isSigner: false,
-            isWritable: true,
-            pubkey: receiver_ata,
-          },
-          {
             isSigner: true,
             isWritable: true,
-            pubkey: sender_address.publicKey,
+            pubkey: sender.publicKey,
           },
           {
             isSigner: false,
             isWritable: false,
             pubkey: TOKEN_PROGRAM_ID,
           },
+          {
+            isSigner: false,
+            isWritable: true,
+            pubkey: receiver_ata,
+          }
         ],
     })
 
     await sendAndConfirmTransaction(
         connection,
         new Transaction().add(ins),
-        [sender_address]
+        [sender]
     );
 }
 
@@ -137,7 +138,7 @@ async function main() {
 
     // Read in accounts from .env
     // sender_address = createKeypairFromFile(__dirname + SENDER_ADDRESS_PATH);
-    sender_address = Keypair.fromSecretKey(bs58.decode(SENDER_SECRETKEY));
+    sender = Keypair.fromSecretKey(bs58.decode(SENDER_SECRETKEY));
     sender_ata = createPublicKeyFromStr(SENDER_ATA);
     token_mint = createPublicKeyFromStr(TOKEN_MINT);
     receiver = createPublicKeyFromStr(RECEIVER);
@@ -147,7 +148,7 @@ async function main() {
     console.log("Receiver's ATA =", receiver_ata);
 
     // Execute spl-token transaction
-    await SPLTransfer(sender_ata, receiver_ata, sender_address);
+    await SPLTransfer(sender_ata, sender, receiver_ata);
     console.log("spl-token transfer succeeded!");
 }
 
