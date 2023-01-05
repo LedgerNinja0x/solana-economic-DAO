@@ -33,12 +33,13 @@ function createPublicKeyFromStr(address: string): PublicKey {
 /**
  * VARS
  */
+const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
+
 const PDA = process.env.PDA as string;
 const PAYEE = process.env.PAYEE as string;
+const ECOV = process.env.ECOV as string; //This is the ATA of the ECOV vault
 const TOKEN_MINT = process.env.TOKEN_MINT as string;
 const USER_PATH = process.env.USER_PATH;
-const ECOV_PATH = process.env.ECOV_PATH;
-const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
 
 const lo = require("buffer-layout");
 const TOKEN_TRANSFER_AMOUNT = 1;
@@ -48,7 +49,7 @@ let programKeypair: Keypair;
 let programId: PublicKey;
 
 let user: Keypair;
-let ecov: Keypair;
+let ecov: PublicKey;
 let pda: PublicKey;
 let payee: PublicKey;
 let token_mint: PublicKey;
@@ -60,7 +61,7 @@ let token_mint: PublicKey;
  */
 async function swapBabySwap(
       user: Keypair,
-      ecov: Keypair,
+      ecov: PublicKey,
       pda: PublicKey, 
       payee: PublicKey,
       token_mint: PublicKey,
@@ -76,7 +77,7 @@ async function swapBabySwap(
       {
         isSigner: false,
         isWritable: true,
-        pubkey: pda, //pubkey only
+        pubkey: pda, //pubkey only (PDA)
       },
       {
         isSigner: true,
@@ -86,22 +87,17 @@ async function swapBabySwap(
       {
         isSigner: false,
         isWritable: true,
-        pubkey: ecov.publicKey,
+        pubkey: ecov, //pubkey only (ATA)
       },
       {
         isSigner: false,
         isWritable: true,
-        pubkey: payee, //pubkey only
-      },
-      {
-        isSigner: false,
-        isWritable: false,
-        pubkey: SystemProgram.programId,
+        pubkey: payee, //pubkey only (public key)
       },
       {
         isSigner: false,
         isWritable: true,
-        pubkey: token_mint, //pubkey only
+        pubkey: token_mint, //pubkey only (ATA)
       },
       {
         isSigner: false,
@@ -142,7 +138,7 @@ async function main() {
 
   // Accounts
   user = createKeypairFromFile(__dirname + USER_PATH);
-  ecov = createKeypairFromFile(__dirname + ECOV_PATH);
+  ecov = createPublicKeyFromStr(ECOV);
   pda = createPublicKeyFromStr(PDA);
   payee = createPublicKeyFromStr(PAYEE);
   token_mint = createPublicKeyFromStr(TOKEN_MINT);

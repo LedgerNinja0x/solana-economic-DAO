@@ -30,8 +30,8 @@ pub fn process_instruction(
     let pda = next_account_info(acc_iter)?; // program-derived-account owning gigi
     // 2. Token account to send ECOV to
     let user = next_account_info(acc_iter)?; // ecoverse user requesting ECOV
-    // 3. SPL-token holder account
-    let ecov_vault = next_account_info(acc_iter)?; // wallet owning ECOV (e.g. gigi)
+    // 3. SPL-token account (ATA)
+    let vault_ata = next_account_info(acc_iter)?; // Account owning ECOV = Gigi's ATA
     // 4. SOL liquidity Cache
     let bbox_sol_payee = next_account_info(acc_iter)?; // gerry = BBox cash-in account
     // 5. SPL-token mint account
@@ -76,18 +76,18 @@ pub fn process_instruction(
     invoke(
         &spl_associated_token_account::instruction::create_associated_token_account(
             &user.key, //funding address
-            &ecov_vault.key, //parent address for ATA derivation
+            &user.key, //parent address for ATA derivation
             &token_mint_account.key,
             &token_program.key,
         ),
-        &[user.clone(), ecov_vault.clone(), token_mint_account.clone(), token_program.clone(), system_program.clone()],
+        &[user.clone(), user.clone(), token_mint_account.clone(), token_program.clone(), system_program.clone()],
     )?;
     msg!("Fetching the created ATA");
-    let ata = spl_associated_token_account::get_associated_token_address(
-        &ecov_vault.key,
+    let user_ata = spl_associated_token_account::get_associated_token_address(
+        &user.key,
         &token_mint_account.key,
     );
-    msg!("Retrieved ATA: {:?}", ata.to_string());
+    msg!("Retrieved ATA: {:?}", user_ata.to_string());
 
 
     // TO DO: add "if SOL transfer is successful, then transfer ECOV, else raise err"
@@ -104,22 +104,22 @@ pub fn process_instruction(
         The only way for the runtime to verify that the address belongs to a
         program is for the program to supply the seeds used to generate the address.
      */
-    // msg!("ECOV Transfer in progress...");
-    // invoke_signed(
-    //     &spl_token::instruction::transfer(
-    //         token_program.key,
-    //         ecov_vault.key,
-    //         ata,
-    //         pda.key,
-    //         &[],
-    //         amount
-    //     )?,
-    //     &[ecov_vault.clone(), ata.clone(), pda.clone()],
-    //     &[
-    //         &[b"BalloonBox-", b"escrow"] //PDA seeds
-    //     ]
-    // )?;
-    // msg!("ECOV transfer succeeded!");
+    msg!("ECOV Transfer in progress...");
+    invoke_signed(
+        &spl_token::instruction::transfer(
+            token_program.key,
+            vault_ata.key,
+            user_ata,
+            pda.key,
+            &[], //no signer keys, b/c the signer will be the PDA
+            amount
+        )?,
+        &[vault_ata.clone(), user_ata.clone(), pda.clone()],
+        &[
+            &[b"BalloonBox-", b"escrow"] //PDA seeds
+        ]
+    )?;
+    msg!("ECOV transfer succeeded!");
 
     // finally
     Ok(())
