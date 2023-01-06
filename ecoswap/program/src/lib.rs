@@ -27,7 +27,7 @@ pub fn process_instruction(
     // read accounts
     let acc_iter = &mut accounts.iter();
     // 1. Token account we hold
-    let pda = next_account_info(acc_iter)?; // program-derived-account owning gigi
+    // let pda = next_account_info(acc_iter)?; // program-derived-account owning gigi
     // 2. Token account to send ECOV to
     let user = next_account_info(acc_iter)?; // ecoverse user requesting ECOV
     // 3. SPL-token account (ATA)
@@ -35,11 +35,15 @@ pub fn process_instruction(
     // 4. SOL liquidity Cache
     let bbox_sol_payee = next_account_info(acc_iter)?; // gerry = BBox cash-in account
     // 5. SPL-token mint account
-    let token_mint_account = next_account_info(acc_iter)?;
+    // let token_mint_account = next_account_info(acc_iter)?;
     // 6. Token Program
     let token_program = next_account_info(acc_iter)?; // Solana TokenProgram
     // 7. System program 
     let system_program = next_account_info(acc_iter)?; // Solana SystemProgram
+    // 8. User's ECOV token account (ATA)
+    let user_ata = next_account_info(acc_iter)?;
+    // 9. SPL-token account holder
+    let vault = next_account_info(acc_iter)?;
 
 
     // deserialized byte array (8 bytes) into an integer
@@ -64,30 +68,30 @@ pub fn process_instruction(
     msg!("SOL transfer succeeded!");
 
 
-    /*
-        Cross program invocation:
-        create an ATA to dup ECOV into.
-        Unlike a system transfer, for an spl-token transfer to succeed 
-        the recipient must already have an Associated Token Account (ATA)
-        compatible with the mint of that specific spl-token. 
-        So create an ATA right now!
-     */
-    msg!("Create an ATA for the ECOV recipient");
-    invoke(
-        &spl_associated_token_account::instruction::create_associated_token_account(
-            &user.key, //funding address
-            &user.key, //parent address for ATA derivation
-            &token_mint_account.key,
-            &token_program.key,
-        ),
-        &[user.clone(), user.clone(), token_mint_account.clone(), token_program.clone(), system_program.clone()],
-    )?;
-    msg!("Fetching the created ATA");
-    let user_ata = spl_associated_token_account::get_associated_token_address(
-        &user.key,
-        &token_mint_account.key,
-    );
-    msg!("Retrieved ATA: {:?}", user_ata.to_string());
+    // /*
+    //     Cross program invocation:
+    //     create an ATA to dup ECOV into.
+    //     Unlike a system transfer, for an spl-token transfer to succeed 
+    //     the recipient must already have an Associated Token Account (ATA)
+    //     compatible with the mint of that specific spl-token. 
+    //     So create an ATA right now!
+    //  */
+    // msg!("Create an ATA for the ECOV recipient");
+    // invoke(
+    //     &spl_associated_token_account::instruction::create_associated_token_account(
+    //         &user.key, //funding address
+    //         &user.key, //parent address for ATA derivation
+    //         &token_mint_account.key,
+    //         &token_program.key,
+    //     ),
+    //     &[user.clone(), user.clone(), token_mint_account.clone(), token_program.clone(), system_program.clone()],
+    // )?;
+    // msg!("Fetching the created ATA");
+    // let user_ata = spl_associated_token_account::get_associated_token_address(
+    //     &user.key,
+    //     &token_mint_account.key,
+    // );
+    // msg!("Retrieved ATA: {:?}", user_ata.to_string());
 
 
     // TO DO: add "if SOL transfer is successful, then transfer ECOV, else raise err"
@@ -104,22 +108,41 @@ pub fn process_instruction(
         The only way for the runtime to verify that the address belongs to a
         program is for the program to supply the seeds used to generate the address.
      */
-    msg!("ECOV Transfer in progress...");
-    invoke_signed(
+
+    //TO DO: derive the bump stored in the PDA itself. You'll need it to sign
+    let _bump: u64 = 255;
+
+    msg!(
+        "Transfer {} SPL-token from {:?} to {:?}",
+        amount, vault_ata.key, user_ata.key
+    );
+    invoke(
+        
+        //instructions
         &spl_token::instruction::transfer(
             token_program.key,
             vault_ata.key,
-            user_ata,
-            pda.key,
-            &[], //no signer keys, b/c the signer will be the PDA
-            amount
+            user_ata.key, //TO DO: type conversion
+            vault.key,
+            &[&vault.key], //the signer will be the PDA
+            amount*u64::pow(10, 9),
         )?,
-        &[vault_ata.clone(), user_ata.clone(), pda.clone()],
+
+        //accounts
         &[
-            &[b"BalloonBox-", b"escrow"] //PDA seeds
-        ]
+            vault_ata.clone(),
+            user_ata.clone(),
+            vault.clone(),
+            token_program.clone(),
+
+        ],
+
+        // //data
+        // &[
+        //     &[b"BalloonBoxEcov", &[bump]][..] //PDA seeds & bump
+        // ],
     )?;
-    msg!("ECOV transfer succeeded!");
+    msg!("SPL-token transfer succeeded!");
 
     // finally
     Ok(())

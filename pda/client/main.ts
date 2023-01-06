@@ -35,7 +35,7 @@ let signer: Keypair;
 /**
  * DERIVE PDA
  */
-async function derivePDA(signer: Keypair) {
+async function derivePDA(signer: Keypair, programId: PublicKey) {
     const [pda, bump] = await PublicKey.findProgramAddress(
         [Buffer.from("BalloonBox-"), Buffer.from("escrow")],
         programId
@@ -83,7 +83,7 @@ async function main() {
     console.log(`ProgramId = ${programId.toString()}`);
     console.log(`Signer = ${signer.publicKey.toString()}`);
 
-    await derivePDA(signer);
+    await derivePDA(signer, programId);
     console.log("Created PDA successfully");
 }
 
