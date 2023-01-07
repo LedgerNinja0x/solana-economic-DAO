@@ -34,32 +34,27 @@ function createPublicKeyFromStr(address: string): PublicKey {
 /**
  * VARS
  */
-const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
-
-// const PDA = process.env.PDA as string;
 const PAYEE = process.env.PAYEE as string;
-const ECOV = process.env.ECOV as string; //This is the ATA of the ECOV vault
-// const TOKEN_MINT = process.env.TOKEN_MINT as string;
-// const USER_PATH = process.env.USER_PATH;
-const USER_PRIVATEKEY = process.env.USER_PRIVATEKEY as string;
-
-const USER_ATA = process.env.USER_ATA as string;
 const VAULT = process.env.VAULT as string;
-let user_ata: PublicKey;
-let vault: Keypair;
-
+const VAULT_ATA = process.env.VAULT_ATA as string;
+const TOKEN_MINT = process.env.TOKEN_MINT as string;
+const USER_PRIVATEKEY = process.env.USER_PRIVATEKEY as string;
+const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
+// const PDA = process.env.PDA as string;
+// const USER_ATA = process.env.USER_ATA as string;
 const lo = require("buffer-layout");
-const TOKEN_TRANSFER_AMOUNT = 2;
+const TOKEN_TRANSFER_AMOUNT = 1;
 
+let user: Keypair;
+let vault: Keypair;
+// let user_ata: PublicKey;
+let vault_ata: PublicKey;
+// let pda: PublicKey;
+let payee: PublicKey;
+let token_mint: PublicKey;
 let connection: Connection;
 let programKeypair: Keypair;
 let programId: PublicKey;
-
-let user: Keypair;
-let ecov: PublicKey;
-// let pda: PublicKey;
-let payee: PublicKey;
-// let token_mint: PublicKey;
 
 
 /**
@@ -67,14 +62,14 @@ let payee: PublicKey;
  * Send x-SOL and recieve x-ECOV
  */
 async function swapBabySwap(
+      connection: Connection,
       user: Keypair,
-      ecov: PublicKey,
-      // pda: PublicKey, 
       payee: PublicKey,
-      // token_mint: PublicKey,
-    connection: Connection,
-    user_ata: PublicKey,
+      token_mint: PublicKey,
+      vault_ata: PublicKey,
       vault: Keypair,
+      // user_ata: PublicKey,
+      // pda: PublicKey, 
 ) {
   let data = Buffer.alloc(8)
   lo.ns64("value").encode(TOKEN_TRANSFER_AMOUNT, data);
@@ -83,11 +78,6 @@ async function swapBabySwap(
     programId: programId,
     data: data,
   keys: [
-      // {
-      //   isSigner: false,
-      //   isWritable: true,
-      //   pubkey: pda, //pubkey only (PDA)
-      // },
       {
         isSigner: true,
         isWritable: true,
@@ -96,45 +86,50 @@ async function swapBabySwap(
       {
         isSigner: false,
         isWritable: true,
-        pubkey: ecov, //pubkey only (ATA)
+        pubkey: payee, //pubkey
+      },
+      {
+        isSigner: false,
+        isWritable: false,
+        pubkey: SystemProgram.programId, //pubkey
       },
       {
         isSigner: false,
         isWritable: true,
-        pubkey: payee, //pubkey only (public key)
+        pubkey: token_mint, //pubkey (ATA)
+      },
+      {
+        isSigner: false,
+        isWritable: false,
+        pubkey: TOKEN_PROGRAM_ID, //pubkey
+      },
+      {
+        isSigner: false,
+        isWritable: true,
+        pubkey: vault_ata, //pubkey (ATA)
+      },
+      {
+        isSigner: false,
+        isWritable: true,
+        pubkey: vault.publicKey,
       },
       // {
       //   isSigner: false,
       //   isWritable: true,
-      //   pubkey: token_mint, //pubkey only (ATA)
+      //   pubkey: user_ata, //pubkey only
       // },
-      {
-        isSigner: false,
-        isWritable: false,
-        pubkey: TOKEN_PROGRAM_ID, //pubkey only
-      },
-      {
-        isSigner: false,
-        isWritable: false,
-        pubkey: SystemProgram.programId, //pubkey only
-      },
-      {
-        isSigner: false,
-        isWritable: true,
-        pubkey: user_ata, //pubkey only
-      },
-      {
-        isSigner: true,
-        isWritable: true,
-        pubkey: vault.publicKey,
-      },
+      // {
+      //   isSigner: false,
+      //   isWritable: true,
+      //   pubkey: pda, //pubkey (PDA)
+      // },
     ],
   })
 
   await sendAndConfirmTransaction(
     connection,
     new Transaction().add(ins),
-    [user, vault]
+    [user]
   );
 }
 
@@ -157,24 +152,23 @@ async function main() {
 
   // Accounts
   // user = createKeypairFromFile(__dirname + USER_PATH);
-  ecov = createPublicKeyFromStr(ECOV);
   // pda = createPublicKeyFromStr(PDA);
-  payee = createPublicKeyFromStr(PAYEE);
-  // token_mint = createPublicKeyFromStr(TOKEN_MINT);
-
-  user_ata = createPublicKeyFromStr(USER_ATA);
-  vault = Keypair.fromSecretKey(bs58.decode(VAULT));
+  // user_ata = createPublicKeyFromStr(USER_ATA);
   user = Keypair.fromSecretKey(bs58.decode(USER_PRIVATEKEY));
+  payee = createPublicKeyFromStr(PAYEE);
+  token_mint = createPublicKeyFromStr(TOKEN_MINT);
+  vault_ata = createPublicKeyFromStr(VAULT_ATA);
+  vault = Keypair.fromSecretKey(bs58.decode(VAULT));
 
   await swapBabySwap(
-    user,
-    ecov,
-    // pda, 
-    payee,
-    // token_mint, 
     connection,
-    user_ata,
-    vault
+    user,
+    payee,
+    token_mint,
+    vault_ata,
+    vault,
+    // user_ata,
+    // pda,
   );
   console.log("Token transfer succeeded!");
 }
