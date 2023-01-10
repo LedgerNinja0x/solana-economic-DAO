@@ -31,23 +31,22 @@ pub fn process_instruction(
     let user = next_account_info(acc_iter)?;
     // SOL liquidity Cache
     let payee = next_account_info(acc_iter)?;
-    // System program 
+    // Solana SystemProgram 
     let system_program = next_account_info(acc_iter)?;
 
     // SPL-token mint account
     let token_mint_account = next_account_info(acc_iter)?;
-    // Token Program
+    // Solana TokenProgram
     let token_program = next_account_info(acc_iter)?;
+    // Solana AssociatedTokenProgram
+    let associated_token_program = next_account_info(acc_iter)?;
 
-    // PL-token account (ATA)
-    let _vault_ata = next_account_info(acc_iter)?;
     // SPL-token account holder
-    let _vault = next_account_info(acc_iter)?;
-
+    let vault = next_account_info(acc_iter)?;
+    // PL-token account (ATA)
+    let vault_ata = next_account_info(acc_iter)?;
     // User's ECOV token account (ATA)
-    // let user_ata = next_account_info(acc_iter)?;
-    // Token account we hold
-    // let pda = next_account_info(acc_iter)?;
+    let user_ata = next_account_info(acc_iter)?;
 
 
     // deserialized byte array (8 bytes) into an integer
@@ -61,53 +60,56 @@ pub fn process_instruction(
     amount, user.key);
     msg!("SOL Transfer in progress...");
 
-    // Cross program invocation:
-    // SOL transfer from USER to PAYEE.
-    // We multiply amount by 10^(-9), b/c the standard unit for SOL is Lamports,
-    // whereas the stanrard unit for ECOV is the mere decimal system
+
+    /*
+        Cross program invocation #1:
+        SOL transfer from USER to PAYEE.
+        We multiply amount by E-9, b/c the standard unit for SOL is Lamports,
+        whereas the stanrard unit for ECOV is the mere decimal system
+    */
     invoke(
         &system_instruction::transfer(user.key, payee.key, amount*u64::pow(10, 9)),
         &[user.clone(), payee.clone()],
     )?;
     msg!("SOL transfer succeeded!");
-
+    msg!("Initialize user ATA for the ECOV recipient");
+    // TO DO: add "if SOL transfer is insuccessful, raise err"
 
     /*
-        Cross program invocation:
+        Cross program invocation #2:
         create an ATA to send ECOV to.
         Unlike a system transfer, for an spl-token transfer to succeed 
         the recipient must already have an Associated Token Account (ATA)
         compatible with the mint of that specific spl-token. 
-        So create an ATA right now!
+        SO, if the ATA doesn't exist yet, create it dynamically!
      */
-    msg!("Create an ATA for the ECOV recipient");
+
+    // // Get your user_ata deterministically &
+    // // ensure it's equal to the on eyou passed in
+    // let ata:Pubkey = spl_associated_token_account
+    //     ::get_associated_token_address(
+    //     &user.key,
+    //     &token_mint_account.key,
+    // );
+
     invoke(
-        &spl_associated_token_account::instruction
-        ::create_associated_token_account(
-            &user.key, //funding address
-            &user.key, //parent address for ATA derivation
-            &token_mint_account.key,
-            &token_program.key,
-        ),
-        &[
-            user.clone(),
-            user.clone(),
-            token_mint_account.clone(),
-            token_program.clone(),
-            system_program.clone()
-        ],
-    )?;
-    msg!("Fetching the created ATA");
-
-    let user_ata = spl_associated_token_account
-        ::get_associated_token_address(
-        &user.key,
+    &spl_associated_token_account::instruction
+    ::create_associated_token_account_idempotent(
+        &user.key, //funding address
+        &user.key, //parent address for ATA derivation
         &token_mint_account.key,
-    );
-    msg!("Retrieved ATA: {:?}", user_ata);
+        &token_program.key,
+    ),
+    &[
+        user.clone(),
+        user.clone(),
+        token_mint_account.clone(),
+        token_program.clone(),
+        associated_token_program.clone(),
+    ],
+    )?;
+    msg!("The user's ATA is = {:?}", user_ata);
 
-
-    // TO DO: add "if SOL transfer is successful, then transfer ECOV, else raise err"
 
     /*
         Cross program invocation:
