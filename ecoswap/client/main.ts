@@ -20,7 +20,7 @@ dotenv.config();
 /**
  * VARS
  */
-const TOKEN_TRANSFER_AMOUNT = 0.1;
+const TOKEN_TRANSFER_AMOUNT = 1;
 const PAYEE = process.env.PAYEE as string;
 const VAULT_ATA = process.env.VAULT_ATA as string;
 const TOKEN_MINT = process.env.TOKEN_MINT as string;

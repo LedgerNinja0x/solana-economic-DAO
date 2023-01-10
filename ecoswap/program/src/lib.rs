@@ -102,13 +102,14 @@ pub fn process_instruction(
     ),
     &[
         user.clone(),
+        user_ata.clone(),
         user.clone(),
         token_mint_account.clone(),
-        token_program.clone(),
+        system_program.clone(),
         associated_token_program.clone(),
     ],
     )?;
-    msg!("The user's ATA is = {:?}", user_ata);
+    msg!("The user's ATA is = {:?}", user_ata.key);
 
 
     /*
