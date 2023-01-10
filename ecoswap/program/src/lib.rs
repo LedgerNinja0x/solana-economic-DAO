@@ -75,14 +75,7 @@ pub fn process_instruction(
     msg!("Initialize user ATA for the ECOV recipient");
     // TO DO: add "if SOL transfer is insuccessful, raise err"
 
-    /*
-        Cross program invocation #2:
-        create an ATA to send ECOV to.
-        Unlike a system transfer, for an spl-token transfer to succeed 
-        the recipient must already have an Associated Token Account (ATA)
-        compatible with the mint of that specific spl-token. 
-        SO, if the ATA doesn't exist yet, create it dynamically!
-     */
+
 
     // // Get your user_ata deterministically &
     // // ensure it's equal to the on eyou passed in
@@ -92,6 +85,14 @@ pub fn process_instruction(
     //     &token_mint_account.key,
     // );
 
+    /*
+        Cross program invocation #2:
+        create an ATA to send ECOV to.
+        Unlike a system transfer, for an spl-token transfer to succeed 
+        the recipient must already have an Associated Token Account (ATA)
+        compatible with the mint of that specific spl-token. 
+        SO, if the ATA doesn't exist yet, create it dynamically!
+    */
     invoke(
     &spl_associated_token_account::instruction
     ::create_associated_token_account_idempotent(
@@ -111,7 +112,9 @@ pub fn process_instruction(
     )?;
     msg!("The user's ATA is = {:?}", user_ata.key);
 
-
+    
+    // //TO DO: derive the bump stored in the PDA itself. You'll need it to sign
+    // let _bump: u64 = 255;
     /*
         Cross program invocation:
         ECOV transfer from ECOV POOL to USER.
@@ -124,41 +127,31 @@ pub fn process_instruction(
         The only way for the runtime to verify that the address belongs to a
         program is for the program to supply the seeds used to generate the address.
      */
+    msg!(
+        "Transfer {} SPL-token from {:?} to {:?}",
+        amount, vault_ata.key, user_ata.key
+    );
+    invoke(
+        &spl_token::instruction::transfer(
+            token_program.key,
+            vault_ata.key,
+            user_ata.key,
+            vault.key,
+            &[&vault.key], //the signer could be a PDA
+            amount*u64::pow(10, 9),
+        )?,
+        &[
+            vault_ata.clone(),
+            user_ata.clone(),
+            vault.clone(),
+            token_program.clone(),
 
-    // //TO DO: derive the bump stored in the PDA itself. You'll need it to sign
-    // let _bump: u64 = 255;
-
-    // msg!(
-    //     "Transfer {} SPL-token from {:?} to {:?}",
-    //     amount, vault_ata.key, user_ata.key
-    // );
-    // invoke(
-        
-    //     //instructions
-    //     &spl_token::instruction::transfer(
-    //         token_program.key,
-    //         vault_ata.key,
-    //         user_ata.key, //TO DO: type conversion
-    //         vault.key,
-    //         &[&vault.key], //the signer will be the PDA
-    //         amount*u64::pow(10, 9),
-    //     )?,
-
-    //     //accounts
-    //     &[
-    //         vault_ata.clone(),
-    //         user_ata.clone(),
-    //         vault.clone(),
-    //         token_program.clone(),
-
-    //     ],
-
-    //     // //data
-    //     // &[
-    //     //     &[b"BalloonBoxEcov", &[bump]][..] //PDA seeds & bump
-    //     // ],
-    // )?;
-    // msg!("SPL-token transfer succeeded!");
+        ],
+        // &[
+        //     &[b"BalloonBoxEcov", &[bump]][..] //PDA seeds & bump
+        // ],
+    )?;
+    msg!("SPL-token transfer succeeded!");
 
     // finally
     Ok(())

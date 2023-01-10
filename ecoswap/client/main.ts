@@ -126,7 +126,7 @@ async function swapSOLforSPLtoken(
         pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
       },
       {
-        isSigner: false,
+        isSigner: true,
         isWritable: true,
         pubkey: vault.publicKey,
       },
@@ -151,7 +151,7 @@ async function swapSOLforSPLtoken(
   await sendAndConfirmTransaction(
     connection,
     new Transaction().add(ins),
-    [user]
+    [user, vault]
   );
 }
 
@@ -194,7 +194,7 @@ async function main() {
     user_ata,
     // pda,
   );
-  console.log("ATA fetched succeeded!");
+  console.log("ecoswap succeeded!");
 }
 
 
