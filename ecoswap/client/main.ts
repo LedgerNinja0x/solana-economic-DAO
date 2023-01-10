@@ -29,8 +29,6 @@ const USER_PRIVATEKEY = process.env.USER_PRIVATEKEY as string;
 const VAULT_PRIVATEKEY = process.env.VAULT_PRIVATEKEY as string;
 
 const lo = require("buffer-layout");
-// const PDA = process.env.PDA as string;
-// const USER_ATA = process.env.USER_ATA as string;
 
 let user: Keypair;
 let vault: Keypair;
@@ -57,7 +55,7 @@ function createPublicKeyFromStr(address: string): PublicKey {
 
 /**
  * Derive the Associated Token Account (ATA)
- * from a wallet_address and a token mint account
+ * from a wallet_address and a token_mint_account
  */
 async function findAssociatedTokenAddress(
   wallet_address: PublicKey,
@@ -86,7 +84,6 @@ async function swapSOLforSPLtoken(
       vault: Keypair,
       vault_ata: PublicKey,
       user_ata: PublicKey,
-      // pda: PublicKey, 
 ) {
   let data = Buffer.alloc(8)
   lo.ns64("value").encode(TOKEN_TRANSFER_AMOUNT, data);
@@ -140,11 +137,6 @@ async function swapSOLforSPLtoken(
         isWritable: true,
         pubkey: user_ata,
       },
-      // {
-      //   isSigner: false,
-      //   isWritable: true,
-      //   pubkey: pda, // PDA
-      // },
     ],
   })
 
@@ -179,10 +171,7 @@ async function main() {
   vault_ata = createPublicKeyFromStr(VAULT_ATA);
   vault = Keypair.fromSecretKey(bs58.decode(VAULT_PRIVATEKEY));
   user_ata = await findAssociatedTokenAddress(user.publicKey, token_mint);
-
   // user = createKeypairFromFile(__dirname + USER_PRIVATEKEY);
-  // pda = createPublicKeyFromStr(PDA);
-  // user_ata = createPublicKeyFromStr(USER_ATA);
 
   await swapSOLforSPLtoken(
     connection,
@@ -192,7 +181,6 @@ async function main() {
     vault,
     vault_ata,
     user_ata,
-    // pda,
   );
   console.log("ecoswap succeeded!");
 }

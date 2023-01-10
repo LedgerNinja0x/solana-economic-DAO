@@ -8,7 +8,7 @@ use solana_program::{
     system_instruction,
     msg,
 };
-// use spl_token;
+use spl_token;
 use spl_associated_token_account;
 use std::convert::TryInto;
 
@@ -72,18 +72,8 @@ pub fn process_instruction(
         &[user.clone(), payee.clone()],
     )?;
     msg!("SOL transfer succeeded!");
-    msg!("Initialize user ATA for the ECOV recipient");
     // TO DO: add "if SOL transfer is insuccessful, raise err"
 
-
-
-    // // Get your user_ata deterministically &
-    // // ensure it's equal to the on eyou passed in
-    // let ata:Pubkey = spl_associated_token_account
-    //     ::get_associated_token_address(
-    //     &user.key,
-    //     &token_mint_account.key,
-    // );
 
     /*
         Cross program invocation #2:
@@ -91,7 +81,7 @@ pub fn process_instruction(
         Unlike a system transfer, for an spl-token transfer to succeed 
         the recipient must already have an Associated Token Account (ATA)
         compatible with the mint of that specific spl-token. 
-        SO, if the ATA doesn't exist yet, create it dynamically!
+        Ss, if the ATA doesn't exist yet, create it now!
     */
     invoke(
     &spl_associated_token_account::instruction
@@ -110,23 +100,16 @@ pub fn process_instruction(
         associated_token_program.clone(),
     ],
     )?;
-    msg!("The user's ATA is = {:?}", user_ata.key);
+    msg!("ATA creation succeeded!");
+    msg!("ATA = {:?}", user_ata.key);
 
-    
-    // //TO DO: derive the bump stored in the PDA itself. You'll need it to sign
-    // let _bump: u64 = 255;
+
     /*
-        Cross program invocation:
-        ECOV transfer from ECOV POOL to USER.
-        Find a Program Derived Account (PDA) and call it escrow
-        Deterministically derive the escrow pubkey
-        let (escrow_pubkey, escrow_bump_seed) = Pubkey::find_program_address(&[&["BalloonBox", "-", "escrow"]], &ecov_program);
-        To reduce the compute cost, use find_program_address() fn 
-        off-chain and pass the resulting bump seed to the program.
-        PDA addresses are indistinguishable from any other pubkey.
-        The only way for the runtime to verify that the address belongs to a
-        program is for the program to supply the seeds used to generate the address.
+        Cross program invocation #3:
+        ECOV transfer from ECOV POOL to USER
      */
+    //TO DO: derive the bump stored in the PDA itself. You'll need it to sign
+    // let _bump: u64 = 255;
     msg!(
         "Transfer {} SPL-token from {:?} to {:?}",
         amount, vault_ata.key, user_ata.key
