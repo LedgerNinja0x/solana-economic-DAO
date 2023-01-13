@@ -1,18 +1,25 @@
 # EcoSwap :evergreen_tree: :herb: :four_leaf_clover:
-This directory contains a Solana Rust smart contract (program) and a TypeScript client to interact with the contract. Imagine George is an arbitrary user who wants to convert some SOL tokens into ECOV tokens on *ecoverse*. This repo handles the logic to allow given tokenswap.
+A unidirectional mechanism to swap 1:1 SOL &rarr; ECOV tokens. <br/> The infrastructure allowing for such a tokenswap comprises of:
+- an custom designed on-chain Solana Rust program
+- a TypeScript client passing instructions to the program
+  
+both of which are contained in this repo.
 
 ---
-### About
 
+### :page_facing_up: About
+
+Assume an *Ecoverse* user, named George, wants to convert some SOL tokens into ECOV tokens. <br/> This repo handles the logic to allow given tokenswap.
 - Rust program <br/>
     It performs 3 consecutive actions:
-    - transfer SOL from user George's's wallet address to Bbox cash-in account
+    - transfer SOL from user George's's wallet address to a cash-in account
     - check whether George already owns an ATA, and creates a new ATA is he doesn't
     - transfer ECOV from ECOV liquidity pool (ATA) to user George's ATA
 
 - TypeScript client<br/>
-    - passes all the needed public keys and secret keys as instructions to the smart contract
-    - executes the contract logic to actually transfer funds around on blockchain
+    - passes all the needed public keys and secret keys as instructions to the Rust program
+    - executes the program logic to actually transfer funds around on the Solana blockchain
+
 
 ### :package: Requirements 
 Rust and npm or yarn.
