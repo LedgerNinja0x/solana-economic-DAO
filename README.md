@@ -1,14 +1,20 @@
 # EcoSwap & DAO :postbox:
-This Repo contains 3 Solana Programs, powering a publicly audited voting system for [BalloonBox](https://www.balloonbox.io/)'s *Ecoverse* dapp. The programs are
- - `ecoswap` a mechanism to swap SOL &rarr; ECOV unidirectionally <br/>
-   :white_check_mark: completed - Milestone #1 deliverable
- - `ecov` a minter of fungible SPL-tokens, named ECOV, which serve as *Ecoverse*'s utility tokens
-   :white_check_mark: completed - Milestone #1 deliverable
- - `dao` a DAO to vote on future Ecoverse projects
-   :hourglass_flowing_sand: Work In Progress - coming soon!
+This Repo contains the codebase to mint, transfer, and use ECOV fungible tokens to pay for services on the *Ecoverse* dapp, developped by [BalloonBox](https://www.balloonbox.io/) for [Solana](https://solana.com/). As such, ECOV is the official utility token for *Ecoverse*. The major featured directories are
+
+ - **ecoswap** <br/>
+   a mechanism to swap SOL &rarr; ECOV unidirectionally <br/>
+   completed - Milestone #1 deliverable :heavy_check_mark: 
+ - **ecov** <br/>
+   a minter of *Ecoverse*'s fungible utility tokens, called ECOV <br/>
+   completed - Milestone #1 deliverable :heavy_check_mark: 
+ - **dao** <br/>
+   a DAO to vote on future Ecoverse projects <br/>
+   Work In Progress - coming soon! :hourglass_flowing_sand: 
+ - **pda** <br/>
+   infrastructure only - please ignore
 
 ---
 
 ### Interaction Diagram
 
-![](https://github.com/BalloonBox-Inc/ecoverse-dao/images/interactions_diagram.png)
+![](https://github.com/BalloonBox-Inc/ecoverse-dao/blob/dev/pix/interactions_diagram.png)
