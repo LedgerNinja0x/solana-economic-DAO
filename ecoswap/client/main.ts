@@ -20,13 +20,13 @@ dotenv.config();
 /**
  * VARS
  */
-const TOKEN_TRANSFER_AMOUNT = 1;
 const PAYEE = process.env.PAYEE as string;
 const VAULT_ATA = process.env.VAULT_ATA as string;
 const TOKEN_MINT = process.env.TOKEN_MINT as string;
 const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
 const USER_PRIVATEKEY = process.env.USER_PRIVATEKEY as string;
 const VAULT_PRIVATEKEY = process.env.VAULT_PRIVATEKEY as string;
+const TOKEN_TRANSFER_AMOUNT = process.env.TOKEN_TRANSFER_AMOUNT;
 
 const lo = require("buffer-layout");
 

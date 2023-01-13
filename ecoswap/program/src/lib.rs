@@ -58,6 +58,9 @@ pub fn process_instruction(
 
     msg!("Request to recieve {:?} ECOV from user {:?}",
     amount, user.key);
+
+    // balance check
+    assert!(2>1, "{}", ProgramError::InsufficientFunds);
     msg!("SOL Transfer in progress...");
 
 
