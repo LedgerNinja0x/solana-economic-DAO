@@ -18,3 +18,47 @@ This Repo contains the codebase to mint, transfer, and use ECOV fungible tokens 
 ### Interaction Diagram
 
 ![](https://github.com/BalloonBox-Inc/ecoverse-dao/blob/dev/pix/interactions_diagram.png)
+
+### Tree Diagram
+
+The tree diagram of he *major* files in the current directory
+```bash
+.
+├── dao                           
+├── ecoswap
+│   ├── _cicd
+│   ├── _dist
+│   │   └── program
+│   └──  accounts
+│       ├── bathsheba.json
+│       ├── rahab.json
+│       ├── ruth.json
+│       └── tamar.json
+│   ├── client
+│   │   └── main.ts
+│   ├── node_modules
+│   └── program
+│       └── src
+│           ├── lib.rs
+│           ├── Cargo.lock
+│           └── Cargo.toml
+│       └── target
+│   ├── .env
+│   ├── .gitignore
+│   ├── package-lock.json
+│   ├── package.json
+|   └── README.md
+├── ecov
+│   ├── node_modules
+│   └──  scripts
+│       ├── rmint-token.mjs
+│       └── ttransfer.mjs
+│   ├── .env
+│   ├── package-lock.json
+│   └── package.json
+├── pda
+├── pix
+├── .gitignore
+├── LICENCE
+└── README.md
+```
