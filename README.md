@@ -1,5 +1,5 @@
 # EcoSwap & DAO :postbox:
-This Repo contains the codebase to mint, transfer, and use ECOV fungible tokens to pay for services on the *Ecoverse* dapp, developped by [BalloonBox](https://www.balloonbox.io/) for [Solana](https://solana.com/). As such, ECOV is the official utility token for *Ecoverse*. The major featured directories are
+This Repo contains the codebase to mint, transfer, and use ECOV fungible tokens to pay for services on the *Ecoverse* dapp, developed by [BalloonBox](https://www.balloonbox.io/) for [Solana](https://solana.com/). As such, ECOV is the official utility token for *Ecoverse*. The major featured directories are
 
  - **ecoswap** <br/>
    a mechanism to swap SOL &rarr; ECOV unidirectionally <br/>
@@ -21,43 +21,43 @@ This Repo contains the codebase to mint, transfer, and use ECOV fungible tokens 
 
 ### Tree Diagram
 
-The tree diagram of he *major* files in the current directory
+The tree diagram of the *major* files in the current directory
 ```bash
 .
-├── dao                           
-├── ecoswap
-│   ├── _cicd
-│   ├── _dist
+├── dao                             # coming soon
+├── ecoswap                         # unidirectional 1:1 swap SOL -> ECOV
+│   ├── _cicd                       # shell custom commands
+│   ├── _dist                       # contains the outputs of the compiled Solana program 
 │   │   └── program
-│   └──  accounts
-│       ├── bathsheba.json
+│   └──  accounts                   # a folder containing a few Solana file system wallets
+│       ├── bathsheba.json          # keypairs for the file system wallet
 │       ├── rahab.json
 │       ├── ruth.json
 │       └── tamar.json
-│   ├── client
+│   ├── client                      # Typescript client that interacts with the Solana program
 │   │   └── main.ts
-│   ├── node_modules
-│   └── program
+│   ├── node_modules                # node.js dependencies
+│   └── program                     # the actual Solana program
 │       └── src
-│           ├── lib.rs
-│           ├── Cargo.lock
-│           └── Cargo.toml
-│       └── target
-│   ├── .env
-│   ├── .gitignore
-│   ├── package-lock.json
-│   ├── package.json
+│           ├── lib.rs              # Rust codebase of the Solana program
+│           ├── Cargo.lock          # auto-generated Rust dependencies file
+│           └── Cargo.toml          # Rust manifest file
+│       └── target                  # output of the compiled Solana program
+│   ├── .env                        # environment variables
+│   ├── .gitignore                  
+│   ├── package-lock.json           # auto-generated Node project metadata
+│   ├── package.json                # metadata of our Node project
 |   └── README.md
-├── ecov
+├── ecov                            # mint and transfer a utility token, called ECOV
 │   ├── node_modules
 │   └──  scripts
-│       ├── rmint-token.mjs
-│       └── ttransfer.mjs
+│       ├── mint-token.mjs          # mint ECOV (SPL-token)
+│       └── transfer.mjs            # transfer ECOV
 │   ├── .env
 │   ├── package-lock.json
 │   └── package.json
-├── pda
-├── pix
+├── pda                             # Program Derived Address (PDA)
+├── pix                             # images & diagrams
 ├── .gitignore
 ├── LICENCE
 └── README.md
