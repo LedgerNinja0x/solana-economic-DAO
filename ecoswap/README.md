@@ -51,3 +51,11 @@ Now, run the TypeScript client and swap tokens
 npm run simulation                                
 ```
 This triggers a command inside _cicd/cicd.sh to run the .ts client file and simulate a transaction on Solana devnet. Check your [Phantom](https://chrome.google.com/webstore/detail/phantom/bfnaelmomeimhlpmgjnjophhpkkoljpa?hl=en) wallet and [Solscan](https://solscan.io/) to view the transaction.
+Check anytime what Solana programs are currently running in your terminal
+```bash
+solana program show --programs
+```
+Permanently close a Solana Program, running
+```bash
+solana program close <PROGRAM_ID> --bypass-warning
+```

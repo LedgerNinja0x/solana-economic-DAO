@@ -56,26 +56,27 @@ pub fn process_instruction(
         .map(u64::from_le_bytes)
         .ok_or(ProgramError::InvalidInstructionData)?;
 
-    msg!("Request to recieve {:?} ECOV from user {:?}",
-    amount, user.key);
+    // multiply amount by E-9, to convert Lamports to SOL
+    let baseamount = (amount as f64) * f64::powf(10.0, -9.0);
 
-    // balance check
-    assert!(2>1, "{}", ProgramError::InsufficientFunds);
+    // log messages
+    msg!("Request to recieve {:?} ECOV from user {:?}",
+    baseamount, user.key);
     msg!("SOL Transfer in progress...");
 
 
     /*
         Cross program invocation #1:
         SOL transfer from USER to PAYEE.
-        We multiply amount by E-9, b/c the standard unit for SOL is Lamports,
-        whereas the stanrard unit for ECOV is the mere decimal system
+        Use match statement to raise err if SOL transfer fails.
     */
-    invoke(
-        &system_instruction::transfer(user.key, payee.key, amount*u64::pow(10, 9)),
+    match invoke(
+        &system_instruction::transfer(user.key, payee.key, amount),
         &[user.clone(), payee.clone()],
-    )?;
-    msg!("SOL transfer succeeded!");
-    // TO DO: add "if SOL transfer is insuccessful, raise err"
+    ) {
+        Ok(_) => msg!("SOL transfer succeeded"),
+        Err(error) => msg!("SOL transfer failed: {:?}", error),
+    };
 
 
     /*
@@ -86,7 +87,7 @@ pub fn process_instruction(
         compatible with the mint of that specific spl-token. 
         Ss, if the ATA doesn't exist yet, create it now!
     */
-    invoke(
+    match invoke(
     &spl_associated_token_account::instruction
     ::create_associated_token_account_idempotent(
         &user.key, //funding address
@@ -102,29 +103,28 @@ pub fn process_instruction(
         system_program.clone(),
         associated_token_program.clone(),
     ],
-    )?;
-    msg!("ATA creation succeeded!");
-    msg!("ATA = {:?}", user_ata.key);
+    ) {
+        Ok(_) => msg!("ATA initialization succeeded with ATA = {:?}", user_ata.key),
+        Err(_) => msg!("ATA initialization failed"),
+    };
 
 
     /*
         Cross program invocation #3:
         ECOV transfer from ECOV POOL to USER
      */
-    //TO DO: derive the bump stored in the PDA itself. You'll need it to sign
-    // let _bump: u64 = 255;
     msg!(
         "Transfer {} SPL-token from {:?} to {:?}",
-        amount, vault_ata.key, user_ata.key
+        baseamount, vault_ata.key, user_ata.key
     );
-    invoke(
+    match invoke(
         &spl_token::instruction::transfer(
             token_program.key,
             vault_ata.key,
             user_ata.key,
             vault.key,
             &[&vault.key], //the signer could be a PDA
-            amount*u64::pow(10, 9),
+            amount,
         )?,
         &[
             vault_ata.clone(),
@@ -133,11 +133,11 @@ pub fn process_instruction(
             token_program.clone(),
 
         ],
-        // &[
-        //     &[b"BalloonBoxEcov", &[bump]][..] //PDA seeds & bump
-        // ],
-    )?;
-    msg!("SPL-token transfer succeeded!");
+    ) {
+        Ok(_) => msg!("SPL-token transfer succeeded"),
+        Err(_) => msg!("SPL-token transfer failed"),
+    };
+    msg!("ecoswap completed!");
 
     // finally
     Ok(())

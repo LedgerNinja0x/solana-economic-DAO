@@ -26,7 +26,9 @@ const TOKEN_MINT = process.env.TOKEN_MINT as string;
 const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
 const USER_PRIVATEKEY = process.env.USER_PRIVATEKEY as string;
 const VAULT_PRIVATEKEY = process.env.VAULT_PRIVATEKEY as string;
-const TOKEN_TRANSFER_AMOUNT = process.env.TOKEN_TRANSFER_AMOUNT;
+const TOKEN_TRANSFER_AMOUNT = Number(
+    process.env.TOKEN_TRANSFER_AMOUNT
+  ) * 1000000000; // Lamports
 
 const lo = require("buffer-layout");
 
