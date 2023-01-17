@@ -19,7 +19,10 @@
 */_dist/
 
 # Solana files
-
 /test-ledger/
 pda/_dist/program/pda-keypair.json
 pda/_dist/program/pda.so
+
+
+# Trial files
+trash.rs

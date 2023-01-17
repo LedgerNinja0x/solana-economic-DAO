@@ -1,17 +1,64 @@
-# Ecoverse DAO :postbox:
-This Repo contains 2 Solana smart contracts (programs), powering a publicly audited voting system for [BalloonBox](https://www.balloonbox.io/)'s Ecoverse dapp. The smart contracts are
- - `ecov` a token contract swapping unidirectionally SOL &rarr; ECOV (thirdweb)
- - `dao` a DAO contract to vote on future Ecoverse projects
+# EcoSwap & DAO :postbox:
+This Repo contains the codebase to mint, transfer, and use ECOV fungible tokens to pay for services on the *Ecoverse* dapp, developed by [BalloonBox](https://www.balloonbox.io/) for [Solana](https://solana.com/). As such, ECOV is the official utility token for *Ecoverse*. The major featured directories are
+
+ - **ecoswap** <br/>
+   a mechanism to swap SOL &rarr; ECOV unidirectionally <br/>
+   completed - Milestone #1 deliverable :heavy_check_mark: 
+ - **ecov** <br/>
+   a minter of *Ecoverse*'s fungible utility tokens, called ECOV <br/>
+   completed - Milestone #1 deliverable :heavy_check_mark: 
+ - **dao** <br/>
+   a DAO to vote on future Ecoverse projects <br/>
+   Work In Progress - coming soon! :hourglass_flowing_sand: 
+ - **pda** <br/>
+   infrastructure only - please ignore
 
 ---
 
-### Milestones 
-:date: 2022/12
+### Interaction Diagram
 
-|Mon|Tue|Wed|Thu|Fri|
-|:-:|:-:|:-:|:-:|:-:|
-|**5** |**6** :mag_right: <br/> R&D ECOV |**7** <br/> dev ECOV |**8** <br/> ECOV MVP |**9** <br/> --- |
-|**12** <br/> SR&ED |**13** <br/> transfer SOL <br/> (Rust backend) |**14** <br/> transfer SOL <br/> (TS frontend) |**15** <br/> dev ECOV |**16** <br/> mint SPL <br/> via CLI |
-|**19** <br/> R&D PDA |**20** <br/> build PDA |**21** <br/> deploy ECOV |**22**  :pushpin: :checkered_flag: <br/> ecoswap |**23** <br/> --- |
-|**26** <br/> --- |**27** <br/> :mag_right: R&D DAO |**28** <br/> dev MVP |**29** <br/> dev DAO |**30** <br/> DAO MVP |
-|**2** <br/> --- | **3** <br/> test DAO | **4** <br/>  alter DAO, test| **5** <br/> deploy DAOx2 | **6** :pushpin: :checkered_flag: <br/> PR & merge | 
+![](https://github.com/BalloonBox-Inc/ecoverse-dao/blob/dev/pix/interactions_diagram.png)
+
+### Tree Diagram
+
+The tree diagram of the *major* files in the current directory
+```bash
+.
+├── dao                             # coming soon
+├── ecoswap                         # unidirectional 1:1 swap SOL -> ECOV
+│   ├── _cicd                       # shell custom commands
+│   ├── _dist                       # contains the outputs of the compiled Solana program 
+│   │   └── program
+│   └──  accounts                   # a folder containing a few Solana file system wallets
+│       ├── bathsheba.json          # keypairs for the file system wallet
+│       ├── rahab.json
+│       ├── ruth.json
+│       └── tamar.json
+│   ├── client                      # Typescript client that interacts with the Solana program
+│   │   └── main.ts
+│   ├── node_modules                # node.js dependencies
+│   └── program                     # the actual Solana program
+│       └── src
+│           ├── lib.rs              # Rust codebase of the Solana program
+│           ├── Cargo.lock          # auto-generated Rust dependencies file
+│           └── Cargo.toml          # Rust manifest file
+│       └── target                  # output of the compiled Solana program
+│   ├── .env                        # environment variables
+│   ├── .gitignore                  
+│   ├── package-lock.json           # auto-generated Node project metadata
+│   ├── package.json                # metadata of our Node project
+|   └── README.md
+├── ecov                            # mint and transfer a utility token, called ECOV
+│   ├── node_modules
+│   └──  scripts
+│       ├── mint-token.mjs          # mint ECOV (SPL-token)
+│       └── transfer.mjs            # transfer ECOV
+│   ├── .env
+│   ├── package-lock.json
+│   └── package.json
+├── pda                             # Program Derived Address (PDA)
+├── pix                             # images & diagrams
+├── .gitignore
+├── LICENCE
+└── README.md
+```

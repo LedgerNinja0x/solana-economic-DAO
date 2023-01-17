@@ -1,96 +1,97 @@
 import {
-    clusterApiUrl,
     Connection,
     Keypair,
-    // LAMPORTS_PER_SOL,
     PublicKey,
     SystemProgram,
     Transaction,
     TransactionInstruction,
+    sendAndConfirmTransaction,
 } from "@solana/web3.js";
-import path from 'path';
 import { readFileSync } from "fs";
-  
-    // Users
-    // const PAYER_KEYPAIR = Keypair.generate(); // <-- generate signer instead of importing one
+import path from 'path';
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+/**
+ * HELPER FUNC
+ */
+function createKeypairFromFile(path: string): Keypair {
+    return Keypair.fromSecretKey(
+        Buffer.from(JSON.parse(readFileSync(path, "utf-8")))
+    )
+} 
+
+/**
+ * VARS
+ */
+const SOLANA_NETWORK = process.env.SOLANA_NETWORK;
+
+let connection: Connection;
+let programKeypair: Keypair;
+let programId: PublicKey;
+let signer: Keypair;
 
 
-    /**
-     * HELPER FUNC
-     */
-    function createKeypairFromFile(path: string): Keypair {
-        return Keypair.fromSecretKey(
-            Buffer.from(JSON.parse(readFileSync(path, "utf-8")))
-        )
-    } 
-
-    /**
-     * VARS
-     */
-    const PAYER_KEYPAIR = createKeypairFromFile("/Users/irenefabris/.config/solana/id.json");
-    // let programKeypair: Keypair;
-    // let program_id: PublicKey;
-  
-
-    (async () => {
-    const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-    
-    // programKeypair = createKeypairFromFile(
-    //     path.join(
-    //         path.resolve(__dirname, '../dist/program'),
-    //         'pda-keypair.json'
-    //     )
-    // );
-    // program_id = programKeypair.publicKey;
-        
-    const program_id = new PublicKey(
-        "6eW5nnSosr2LpkUGCdznsjRGDhVb26tLmiM1P8RV1QQp"
-        // ^| What address is the one used here above?
-        // program_id of the EcoSwap token - currently using a random one
-    );
-        
-    console.log(`Program Id = ${program_id.toString()}`);
-    console.log(`PAYER_KEYPAIR = ${PAYER_KEYPAIR.publicKey.toString()}`);
-
-    // // Airdop to Payer
-    // await connection.confirmTransaction(
-    //     await connection.requestAirdrop(PAYER_KEYPAIR.publicKey, LAMPORTS_PER_SOL)
-    // );
-
+/**
+ * DERIVE PDA
+ */
+async function derivePDA(signer: Keypair, programId: PublicKey) {
     const [pda, bump] = await PublicKey.findProgramAddress(
-        [Buffer.from("customaddress"), PAYER_KEYPAIR.publicKey.toBuffer()],
-        program_id
+        [Buffer.from("BalloonBox-"), Buffer.from("escrow")],
+        programId
     );
-
-    // print PDA info
     console.log(`PDA Pubkey: ${pda.toString()}`);
     console.log(`PDA Bump: ${bump.toString()}`);
 
-    const createPDAIx = new TransactionInstruction({
-    programId: program_id,
-    data: Buffer.from(Uint8Array.of(bump)),
-    keys: [
-        {
-        isSigner: true,
-        isWritable: true,
-        pubkey: PAYER_KEYPAIR.publicKey,
-        },
-        {
-        isSigner: false,
-        isWritable: true,
-        pubkey: pda,
-        },
-        {
-        isSigner: false,
-        isWritable: false,
-        pubkey: SystemProgram.programId,
-        },
-    ],
-    });
+    let data = Buffer.from(Uint8Array.of(bump));
+    let ins = new TransactionInstruction({
+        keys: [
+            {pubkey: signer.publicKey, isSigner: true, isWritable: true},
+            {pubkey: pda, isSigner: false, isWritable: true},
+            {pubkey: SystemProgram.programId, isSigner: false, isWritable: false},
+        ],
+        programId: programId,
+        data: data,
+    })
 
-    const transaction = new Transaction();
-    transaction.add(createPDAIx);
+    await sendAndConfirmTransaction(
+        connection,
+        new Transaction().add(ins),
+        [signer]
+    );
+}
 
-    const txHash = await connection.sendTransaction(transaction, [PAYER_KEYPAIR]);
-    console.log(`Created PDA successfully. Tx Hash: ${txHash}`);
-})();
+
+/**
+ * MAIN
+ */
+async function main() {
+    connection = new Connection(
+        `https://api.${SOLANA_NETWORK}.solana.com`, 'confirmed'
+    );
+
+    programKeypair = createKeypairFromFile(
+        path.join(
+            path.resolve(__dirname, '../dist/program'),
+            'pda-keypair.json'
+        )
+    );
+    programId = programKeypair.publicKey;
+    signer = createKeypairFromFile(
+        "/Users/irenefabris/Documents/GitHub/ecoverse-dao/pda/accounts/bathsheba.json"
+    );
+    console.log(`ProgramId = ${programId.toString()}`);
+    console.log(`Signer = ${signer.publicKey.toString()}`);
+
+    await derivePDA(signer, programId);
+    console.log("Created PDA successfully");
+}
+
+
+main().then(
+    () => process.exit(),
+    err => {
+        console.error(err);
+        process.exit(-1);
+    },
+);
