@@ -1,0 +1,19 @@
+{
+  "name": "dao",
+  "version": "1.0.0",
+  "description": "A DAO to cast votes in support of FSC-certified forestry projects",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BalloonBox-Inc/ecoverse-dao.git"
+  },
+  "keywords": [
+    "dao"
+  ],
+  "author": "irenefabris",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/BalloonBox-Inc/ecoverse-dao/issues"
+  },
+  "homepage": "https://github.com/BalloonBox-Inc/ecoverse-dao#readme"
+}
