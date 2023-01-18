@@ -1,4 +1,3 @@
-const web3 = require('@solana/web3.js');
 import { createMint } from '@solana/spl-token';
 import {
     clusterApiUrl,
@@ -7,7 +6,7 @@ import {
     LAMPORTS_PER_SOL
 } from '@solana/web3.js';
 import { config } from 'dotenv';
-import { readFileSync } from 'fs';
+import { bs58 } from 'bs58';
 config();
 
 
@@ -22,19 +21,9 @@ const connection = new Connection(
   clusterApiUrl(SOLANA_NETWORK),
   'confirmed'
 );
-let payer = keypairFromStr(PAYER)
-let mintAuthority = keypairFromStr(MINT_AUTHORITY);
-let freezeAuthority = keypairFromStr(FREEZE_AUTHORITY);
-
-
-/**
- *  HELPER FUNC
- */
-function keypairFromStr(secretKey) {
-    return Keypair.fromSecretKey(
-        Buffer.from(JSON.parse(readFileSync(secretKey, "utf-8")))
-    )
-}
+let payer = Keypair.fromSecretKey(bs58.decode(PAYER));
+let mintAuthority = Keypair.fromSecretKey(bs58.decode(MINT_AUTHORITY));
+let freezeAuthority = Keypair.fromSecretKey(bs58.decode(FREEZE_AUTHORITY));
 
 
 /**
@@ -53,7 +42,7 @@ const mintInfo = await getMint(
     connection,
     mint
   )
-console.log(mintInfo.supply);
+console.log("Token Mint = {}", mintInfo.supply);
   
 
 /**
@@ -65,7 +54,7 @@ const tokenAccount = await getOrCreateAssociatedTokenAccount(
     mint,
     payer.publicKey
   )
-console.log(tokenAccount.address.toBase58());
+console.log("ATA = {}", tokenAccount.address.toBase58());
   
 const tokenAccountInfo = await getAccount(
     connection,
