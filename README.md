@@ -49,13 +49,23 @@ The tree diagram of the *major* files in the current directory
 │   ├── package.json                # metadata of our Node project
 |   └── README.md
 ├── ecov                            # mint and transfer a utility token, called ECOV
-│   ├── node_modules
-│   └──  scripts
-│       ├── mint-token.mjs          # mint ECOV (SPL-token)
-│       └── transfer.mjs            # transfer ECOV
-│   ├── .env
-│   ├── package-lock.json
-│   └── package.json
+│   ├── firstmint                   # first-time mint of ECOV
+│       ├── node_modules
+│       └──  scripts
+│           ├── firstmint.mjs       # mint ECOV (SPL-token)
+│           └── transfer.mjs        # transfer ECOV
+│       ├── .env
+│       ├── package-lock.json
+│       ├── package.json
+│       └── README.md
+│   └── remint                      # remint existing supply of ECOV
+│       ├── node_modules
+│       ├── .env
+│       ├── .gitignore              
+│       ├── package-lock.json
+│       ├── package.json
+│       ├── README.md
+│       └── remint.mjs
 ├── pda                             # Program Derived Address (PDA)
 ├── pix                             # images & diagrams
 ├── .gitignore
