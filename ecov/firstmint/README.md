@@ -14,3 +14,11 @@ LIQUIDITY_POOL_PRIVATE_KEY=<privatekey>
 RECEIVER_PUBKEY=<publickey>
 TOKEN_ADDRESS=<mint_token_address>
 ```
+
+### :gear: Run
+```bash
+npm install
+
+node firstmint.mjs
+node transfers.mjs
+```
