@@ -15,18 +15,18 @@ const sdk = ThirdwebSDK.fromPrivateKey("devnet", process.env.LIQUIDITY_POOL_PRIV
 const program = await sdk.getProgram(process.env.TOKEN_ADDRESS, "token");
 
 // Log token stats
-const balance = await program.balance();
-const balOf = await program.balanceOf(process.env.RECEIVER_PUBKEY);
+// const balance = await program.balance();
+// const balOf = await program.balanceOf(process.env.RECEIVER_PUBKEY);
 const supply = await program.totalSupply();
 const metadata = await program.getMetadata();
 
 
-console.log("Balance = ", balance.displayValue);
-console.log("BalOf = ", balOf.displayValue);
+// console.log("Balance = ", balance.displayValue);
+// console.log("BalOf = ", balOf.displayValue);
 console.log("Supply = ", supply.displayValue);
 console.log("Metadata = ", metadata);
 
 // Transfer some tokens
 const to = process.env.RECEIVER_PUBKEY;
-const amount = 75;
+const amount = 30;
 const tx = program.transfer(to, amount);

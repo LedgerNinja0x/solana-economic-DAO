@@ -1,6 +1,7 @@
 # DAO :package: :postbox:
 
-A publicly audited voting system for *Ecoverse* users to select, endorse, and cast votes in support of future projects the *Ecoverse* platform will priositize to develop, to grow the dapp.
+A publicly audited voting system for *Ecoverse* users to select, endorse, and cast votes to support future *Ecoverse* projects. Our developer team will prioritize the implementation of DAO-voted projects to grow and expland the *Ecoverse* dapp.
+
 
 ---
 
