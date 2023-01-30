@@ -10,8 +10,6 @@ This Repo contains the codebase to mint, transfer, and use ECOV fungible tokens 
  - **dao** <br/>
    a DAO to vote on future Ecoverse projects <br/>
    completed - Milestone #2 deliverable :heavy_check_mark:
- - **pda** <br/>
-   infrastructure only - please ignore
 
 ---
 
@@ -24,7 +22,7 @@ This Repo contains the codebase to mint, transfer, and use ECOV fungible tokens 
 The tree diagram of the *major* files in the current directory
 ```bash
 .
-├── dao                             # coming soon
+├── dao                             # hyperlink to realms.today DAO
 ├── ecoswap                         # unidirectional 1:1 swap SOL -> ECOV
 │   ├── _cicd                       # shell custom commands
 │   ├── _dist                       # contains the outputs of the compiled Solana program 
@@ -66,7 +64,6 @@ The tree diagram of the *major* files in the current directory
 │       ├── package.json
 │       ├── README.md
 │       └── remint.mjs
-├── pda                             # Program Derived Address (PDA)
 ├── pix                             # images & diagrams
 ├── .gitignore
 ├── LICENCE
