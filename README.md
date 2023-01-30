@@ -9,7 +9,7 @@ This Repo contains the codebase to mint, transfer, and use ECOV fungible tokens 
    completed - Milestone #1 deliverable :heavy_check_mark: 
  - **dao** <br/>
    a DAO to vote on future Ecoverse projects <br/>
-   Work In Progress - coming soon! :hourglass_flowing_sand: 
+   completed - Milestone #2 deliverable :heavy_check_mark:
  - **pda** <br/>
    infrastructure only - please ignore
 
